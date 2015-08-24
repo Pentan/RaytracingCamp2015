@@ -5,6 +5,7 @@
 #include "bsdfdiffuse.h"
 #include "camera.h"
 #include "sceneobject.h"
+#include "materialsky.h"
 
 using namespace r1h;
 
@@ -69,7 +70,7 @@ SimpleObjLoader::SimpleObjLoader(std::string filepath, Scene *sc):
 	vOffset(0), vnOffset(0), vtOffset(0)
 {
 	// backgroud material
-	scene->setBackgroundMaterial(MaterialRef(new ObjMaterial()));
+	scene->setSkyMaterial(SkyMaterialRef(new SkyMaterial())); //+++++
 	// default material
 	ObjMaterial *mat = new ObjMaterial();
 	mat->setEmissionColor(Color(1.0, 0.0, 0.0));
@@ -223,11 +224,11 @@ void SimpleObjLoader::endFile(std::string fullpath) {
 	
 	if(fullpath.substr(fullpath.length() - 3) == "obj") {
 		const R1hFPType fovdeg = 60.0;
-		const R1hFPType aspect = 16.0 / 9.0;
+		//const R1hFPType aspect = 16.0 / 9.0;
 		
 		Camera *camera = scene->getCamera();
-		camera->setFieldOfView(fovdeg);
-		camera->setAspectRatio(aspect);
+		//camera->setFieldOfView(fovdeg);
+		//camera->setAspectRatio(aspect);
 		
 		Vector3 aabbsize = sceneAABB.max - sceneAABB.min;
 		R1hFPType d = aabbsize.y * 0.5 / tan(fovdeg * 0.5 * kPI / 180.0);

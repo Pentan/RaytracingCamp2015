@@ -1,17 +1,9 @@
 ﻿#include <iostream>
 
 #include "random.h"
-#include "texture.h"
+#include "texturenoise.h"
 
 using namespace r1h;
-
-/// base class
-Vector3 Texture::applyTransform(const Vector3 &p) const {
-    if(!isUseTrans) {
-        return p;
-    }
-    return Matrix4::transformV3(transform, p);
-}
 
 /// noise
 struct NoiseSortComparator {

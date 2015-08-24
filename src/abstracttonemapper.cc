@@ -78,7 +78,8 @@ void AbstractToneMapper::exportBMP(const FrameBuffer *frmbuf, const std::string 
     
     // bitmap
     int rgb[3];
-    for(int y = height - 1; y >= 0; y--) {
+    //for(int y = height - 1; y >= 0; y--) {
+	for(int y = 0; y < height; y++) {
         for(int x = 0; x < width; x++) {
             const Color &srccol = frmbuf->getColorAt(x, y);
             const Color outcol = tonemap(srccol);

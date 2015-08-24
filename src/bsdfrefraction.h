@@ -1,7 +1,7 @@
 ﻿#ifndef R1H_BSDFREFRACTION_H
 #define R1H_BSDFREFRACTION_H
 
-#include "bsdf.h"
+#include "bsdfbase.h"
 
 namespace r1h {
 

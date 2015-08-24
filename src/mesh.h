@@ -78,7 +78,7 @@ public:
     size_t addFace(const int a, const int b, const int c, const int matid=0);
     size_t getFaceCount() const;
 	
-    Vector3 getVaryingAttr(const int faceid, const int attrid, const Vector3 weights);
+    Vector3 getVaryingAttr(const int faceid, const int attrid, const Vector3 weights) const;
 	
 	void postProcess();
     void calcSmoothNormals();

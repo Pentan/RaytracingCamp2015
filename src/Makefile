@@ -33,6 +33,7 @@ OBJS = \
     eduptscene.o \
     framebuffer.o \
     intersection.o \
+    materialsky.o \
     mesh.o \
     renderer.o \
     scene.o \

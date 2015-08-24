@@ -2,10 +2,14 @@
 #include <sstream>
 #include <cstdio>
 #include <cstring>
+#include <cassert>
 
 #include "camera.h"
 #include "xmlscene.h"
 #include "scenesupport.h"
+#include "material.h"
+#include "sphere.h"
+#include "aabbgeometry.h"
 
 using namespace r1h;
 
@@ -30,9 +34,15 @@ private:
 	bool parseSky(tinyxml2::XMLElement *elm);
 	bool parseObject(tinyxml2::XMLElement *elm);
 	
-	Texture* parseTextureElement(tinyxml2::XMLElement *elm);
-	Material* parseMaterialElement(tinyxml2::XMLElement *elm);
-	Geometry* parseGeometryElement(tinyxml2::XMLElement *elm);
+	TextureRef parseTextureElement(tinyxml2::XMLElement *elm);
+	MaterialRef parseMaterialElement(tinyxml2::XMLElement *elm);
+	GeometryRef parseGeometryElement(tinyxml2::XMLElement *elm);
+	
+	Vector3 parseVector3Element(tinyxml2::XMLElement *elm);
+	Color parseColorElement(tinyxml2::XMLElement *elm);
+	Matrix4 parseMatrix4Element(tinyxml2::XMLElement *elm);
+	
+	Matrix4 parseTransformElement(tinyxml2::XMLElement *elm);
 	
 	bool checkIntAttribute(tinyxml2::XMLElement *elm, const char *key, int *val);
 	bool checkFloatAttribute(tinyxml2::XMLElement *elm, const char *key, R1hFPType *val);
@@ -135,27 +145,28 @@ bool XMLSceneLoader::XmlParser::parseAssetLibrary(tinyxml2::XMLElement *elm) {
 		const char *elmname = tmpelm->Name();
 		
 		if(strcmp(elmname, "geometry") == 0) {
-			Geometry *geom = parseGeometryElement(tmpelm);
-			if(geom) {
-				int res = loader->registerAsset(geom->getAssetId(), GeometryRef(geom));
+			GeometryRef geom = parseGeometryElement(tmpelm);
+			if(geom.get() != nullptr) {
+				int res = loader->registerAsset(geom->getAssetId(), geom);
 				if(res != kRegistered) {
 					std::cout << "Geometry " << geom->getAssetId() << " register failed:" << res << std::endl;
 				}
+			} else {
 			}
 			
 		} else if(strcmp(elmname, "texture") == 0) {
-			Texture *tex = parseTextureElement(tmpelm);
-			if(tex) {
-				int res = loader->registerAsset(tex->getAssetId(), TextureRef(tex));
+			TextureRef tex = parseTextureElement(tmpelm);
+			if(tex.get() != nullptr) {
+				int res = loader->registerAsset(tex->getAssetId(), tex);
 				if(res != kRegistered) {
 					std::cout << "Texture " << tex->getAssetId() << " register failed:" << res << std::endl;
 				}
 			}
 			
 		} else if(strcmp(elmname, "material") == 0) {
-			Material *mat = parseMaterialElement(tmpelm);
-			if(mat) {
-				int res = loader->registerAsset(mat->getAssetId(), MaterialRef(mat));
+			MaterialRef mat = parseMaterialElement(tmpelm);
+			if(mat.get() != nullptr) {
+				int res = loader->registerAsset(mat->getAssetId(), mat);
 				if(res != kRegistered) {
 					std::cout << "Material " << mat->getAssetId() << " register failed:" << res << std::endl;
 				}
@@ -171,7 +182,7 @@ bool XMLSceneLoader::XmlParser::parseAssetLibrary(tinyxml2::XMLElement *elm) {
 	return true;
 }
 bool XMLSceneLoader::XmlParser::parseCamera(tinyxml2::XMLElement *elm) {
-	std::cout << "TODO: parseCamera" << std::endl;
+	std::cout << "parseCamera" << std::endl;
 	
 	Scene *scn = loader->getScene();
 	Camera *cam = scn->getCamera();
@@ -181,43 +192,289 @@ bool XMLSceneLoader::XmlParser::parseCamera(tinyxml2::XMLElement *elm) {
 		const char *elmname = tmpelm->Name();
 		
 		if(strcmp(elmname, "transform") == 0) {
+			Matrix4 mat = parseTransformElement(tmpelm);
+			cam->setTransform(mat);
 			
-		} else if(strcmp(elmname, "lenz") == 0) {
+		} else if(strcmp(elmname, "lens") == 0) {
+			R1hFPType fl, fn;
+			if(checkFloatAttribute(tmpelm, "focalLength", &fl)) {
+				cam->setFocalLength(fl);
+			}
+			if(checkFloatAttribute(tmpelm, "fNumber", &fn)) {
+				cam->setFNumber(fn);
+			}
 			
 		} else if(strcmp(elmname, "sensor") == 0) {
+			R1hFPType w, h, a;
+			int flag = 0;
+			if(checkFloatAttribute(tmpelm, "width", &w)) {
+				flag |= 1;
+			}
+			if(checkFloatAttribute(tmpelm, "height", &h)) {
+				flag |= 2;
+			}
+			if(checkFloatAttribute(tmpelm, "aspect", &a)) {
+				flag |= 4;
+			}
+			
+			if((flag & 3) == 3) {
+				cam->setSensorSize(w, h);
+			} else if((flag & 5) == 5) {
+				cam->setSensorWidthWithAspect(w, a);
+			} else if((flag & 6) == 6) {
+				w = h * a;
+				cam->setSensorSize(w, h);
+			} else {
+				std::cout << "<sensor> seting is illegal. needs 2 of w, h and aspect." << std::endl;
+			}
 			
 		}
 		
 		tmpelm = tmpelm->NextSiblingElement();
 	}
-	
+	std::cout << "done" << std::endl;
 	return true;
 }
 bool XMLSceneLoader::XmlParser::parseSky(tinyxml2::XMLElement *elm) {
-	std::cout << "TODO: parseSky" << std::endl;
+	std::cout << "parseSky" << std::endl;
+	Scene *scn = loader->getScene();
+	SkyMaterialRef mat = SkyMaterialRef(new SkyMaterial());
+	
+	tinyxml2::XMLElement *tmpelm = elm->FirstChildElement();
+	while(tmpelm) {
+		const char *elmname = tmpelm->Name();
+		
+		if(strcmp(elmname, "color") == 0) {
+			Color col = parseColorElement(tmpelm);
+			mat->setColor(col);
+			
+		} else if(strcmp(elmname, "texture") == 0) {
+			TextureRef tex = parseTextureElement(tmpelm);
+			mat->setTexture(tex);
+			
+		} else if(strcmp(elmname, "transform") == 0) {
+			Matrix4 trans = parseTransformElement(tmpelm);
+			mat->setTransform(trans);
+			
+		} else {
+			std::cout << "unknown element <" << elmname << "> found" << std::endl;
+		}
+		
+		tmpelm = tmpelm->NextSiblingElement();
+	}
+	std::cout << "done" << std::endl;
+	
+	// noproblem. attach to scene.
+	scn->setSkyMaterial(mat);
+	
 	return true;
 }
 bool XMLSceneLoader::XmlParser::parseObject(tinyxml2::XMLElement *elm) {
 	std::cout << "TODO: parseObject" << std::endl;
+	Scene *scn = loader->getScene();
+	SceneObject *scnobj = new SceneObject();
+	
+	tinyxml2::XMLElement *tmpelm = elm->FirstChildElement();
+	while(tmpelm) {
+		const char *elmname = tmpelm->Name();
+		
+		if(strcmp(elmname, "transform") == 0) {
+			std::cout << " transform found" << std::endl;
+			Matrix4 mat = parseTransformElement(tmpelm);
+			scnobj->setTransform(mat);
+			
+		} else if(strcmp(elmname, "geometry") == 0) {
+			GeometryRef geomref = parseGeometryElement(tmpelm);
+			if(geomref.get() != nullptr) {
+				scnobj->setGeometry(geomref);
+			}
+			
+		} else if(strcmp(elmname, "material") == 0) {
+			MaterialRef matref = parseMaterialElement(tmpelm);
+			if(matref.get() != nullptr) {
+				scnobj->addMaterial(matref);
+			}
+			
+		} else {
+			std::cout << "unknown element <" << elmname << "> found" << std::endl;
+		}
+		
+		tmpelm = tmpelm->NextSiblingElement();
+	}
+	
+	if(scnobj != nullptr) {
+		scn->addObject(SceneObjectRef(scnobj));
+	}
+	
 	return true;
 }
 
-Texture* XMLSceneLoader::XmlParser::parseTextureElement(tinyxml2::XMLElement *elm) {
-	Texture *ret = nullptr;
-	std::cout << "TODO parseTextureElement" << std::endl;
+TextureRef XMLSceneLoader::XmlParser::parseTextureElement(tinyxml2::XMLElement *elm) {
+	TextureRef ret;
+	std::string refid;
+	if(checkStringAttribute(elm, "ref", &refid)) {
+		// TODO: stub is not allowed
+		//ret = new StubTexture(refid);
+		//std::cout << "StubTexture:" << refid << std::endl;
+		
+		ret = loader->findTextureAsset(refid);
+		
+	} else {
+		// others
+		// TODO:
+		std::cout << "TODO parseTextureElement when not stub." << std::endl;
+		
+		ret = TextureRef(nullptr);
+	}
+	//std::cout << "TODO parseTextureElement" << std::endl;
 	return ret;
 }
 
-Material* XMLSceneLoader::XmlParser::parseMaterialElement(tinyxml2::XMLElement *elm) {
-	Material *ret = nullptr;
-	std::cout << "TODO parseMaterialElement" << std::endl;
+MaterialRef XMLSceneLoader::XmlParser::parseMaterialElement(tinyxml2::XMLElement *elm) {
+	MaterialRef ret;
+	std::string refid;
+	if(checkStringAttribute(elm, "ref", &refid)) {
+		// TODO: stub is not allowed
+		//ret = new StubMaterial(refid);
+		//std::cout << "StubMaterial:" << refid << std::endl;
+		ret = loader->findMaterialAsset(refid);
+		
+	} else {
+		std::cout << "TODO parseMaterialElement when not stub." << std::endl;
+		ret = MaterialRef(nullptr);
+	}
+	//std::cout << "TODO parseMaterialElement" << std::endl;
 	return ret;
 }
 
-Geometry* XMLSceneLoader::XmlParser::parseGeometryElement(tinyxml2::XMLElement *elm) {
-	Geometry *ret = nullptr;
-	std::cout << "TODO parseGeometryElement" << std::endl;
+GeometryRef XMLSceneLoader::XmlParser::parseGeometryElement(tinyxml2::XMLElement *elm) {
+	GeometryRef ret;
+	std::string refid;
+	if(checkStringAttribute(elm, "ref", &refid)) {
+		// TODO: stub is not allowed
+		//ret = new StubGeometry(refid);
+		//std::cout << "StubGeometry:" << refid << std::endl;
+		
+		ret = loader->findGeometryAsset(refid);
+		
+	} else {
+		std::cout << "TODO parseGeometryElement when not stub." << std::endl;
+		
+		bool isok;
+		std::string geomtype;
+		isok = checkStringAttribute(elm, "type", &geomtype);
+		assert(isok);
+		
+		if(geomtype.compare("mesh") == 0) {
+			// TODO:parse mesh geometry
+			std::cout << "TODO parse mesh geometry" << std::endl;
+			
+		} else if(geomtype.compare("sphere") == 0) {
+			R1hFPType radius = 1.0;
+			Vector3 pos(0.0);
+			checkFloatAttribute(elm, "radius", &radius);
+			checkVector3Attribute(elm, "position", &pos);
+			
+			Sphere *sphere = new Sphere(radius, pos);
+			ret = GeometryRef(sphere);
+			
+		} else if(geomtype.compare("cube") == 0) {
+			Vector3 size;
+			Vector3 pos;
+			checkVector3Attribute(elm, "size", &size);
+			checkVector3Attribute(elm, "position", &pos);
+			
+			Vector3 minp = pos - size * 0.5;
+			Vector3 maxp = pos + size * 0.5;
+			
+			AABBGeometry *abgeom = new AABBGeometry(minp, maxp);
+			ret = GeometryRef(abgeom);
+			
+		} else {
+			assert(false);
+		}
+	}
+	
 	return ret;
+}
+
+Vector3 XMLSceneLoader::XmlParser::parseVector3Element(tinyxml2::XMLElement *elm) {
+	Vector3 ret;
+	std::cout << "TODO parseVector3Element" << std::endl;
+	return ret;
+}
+Color XMLSceneLoader::XmlParser::parseColorElement(tinyxml2::XMLElement *elm) {
+	Color ret;
+	
+	// TODO: RGB only
+	checkFloatAttribute(elm, "r", &ret.r);
+	checkFloatAttribute(elm, "g", &ret.g);
+	checkFloatAttribute(elm, "b", &ret.b);
+	
+	//std::cout << "TODO parseColorElement" << std::endl;
+	return ret;
+}
+Matrix4 XMLSceneLoader::XmlParser::parseMatrix4Element(tinyxml2::XMLElement *elm) {
+	Matrix4 ret;
+	std::cout << "TODO parseMatrix4Element" << std::endl;
+	return ret;
+}
+
+Matrix4 XMLSceneLoader::XmlParser::parseTransformElement(tinyxml2::XMLElement *elm) {
+	Matrix4 mat;
+	
+	tinyxml2::XMLElement *tmpelm = elm->FirstChildElement();
+	while(tmpelm) {
+		const char *elmname = tmpelm->Name();
+		Matrix4 tmpmat;
+		
+		if(strcmp(elmname, "translate") == 0) {
+			Vector3 trans;
+			if(checkVector3Attribute(tmpelm, "value", &trans)) {
+				mat.translate(trans);
+			}
+			
+		} else if(strcmp(elmname, "rotate") == 0) {
+			Vector3 axis;
+			R1hFPType angle = 0.0;
+			bool res;
+			res = checkVector3Attribute(tmpelm, "axis", &axis);
+			if(res) {
+				res = checkFloatAttribute(tmpelm, "angle", &angle);
+			}
+			if(res) {
+				axis.normalize();
+				mat.rotate(angle, axis);
+			}
+			
+		} else if(strcmp(elmname, "scale") == 0) {
+			Vector3 scl;
+			if(checkVector3Attribute(tmpelm, "value", &scl)) {
+				mat.scale(scl);
+			}
+			
+		} else if(strcmp(elmname, "lookat") == 0) {
+			Vector3 pos, up, lookat;
+			bool res;
+			res = checkVector3Attribute(tmpelm, "position", &pos);
+			if(res) {
+				res = checkVector3Attribute(tmpelm, "up", &up);
+			}
+			if(res) {
+				res = checkVector3Attribute(tmpelm, "lookat", &lookat);
+			}
+			if(res) {
+				Matrix4 lookmat = Matrix4::makeLookAt(pos.x, pos.y, pos.z, lookat.x, lookat.y, lookat.z, up.x, up.y, up.z);
+				mat = mat * lookmat;
+			}
+		} else {
+			std::cout << "unknown transform element: <" << elmname << ">" << std::endl;
+		}
+		
+		tmpelm = tmpelm->NextSiblingElement();
+	}
+	
+	return mat;
 }
 
 bool XMLSceneLoader::XmlParser::checkIntAttribute(tinyxml2::XMLElement *elm, const char *key, int *val) {
@@ -297,6 +554,7 @@ XMLSceneLoader::~XMLSceneLoader() {
 
 bool XMLSceneLoader::load(std::string&  xmlpath, Scene *scn, Renderer *rndr)
 {
+	bool ret;
 	scene = scn;
 	renderer = rndr;
 	
@@ -304,7 +562,13 @@ bool XMLSceneLoader::load(std::string&  xmlpath, Scene *scn, Renderer *rndr)
 	
 	std::cout << basepath << " | " << filename << std::endl;
 	
-	return parser->load(xmlpath, this);
+	ret = parser->load(xmlpath, this);
+	/*
+	if(ret) {
+		ret = resolveReference();
+	}
+	*/
+	return ret;
 }
 
 Scene* XMLSceneLoader::getScene() {
@@ -370,4 +634,17 @@ TextureRef XMLSceneLoader::findTextureAsset(std::string key) {
 	return ite->second;
 }
 
+/*
+/////
+bool XMLSceneLoader::resolveReference() {
+	
+	// library
+	
+	
+	// objects
+	
+	
+	return true;
+}
+*/
 

@@ -33,7 +33,11 @@ void Mesh::Face::addAttr(const int attrid, const int a, const int b, const int c
 }
 
 /////
-Mesh::Mesh(const int vreserve, const int freserv): Geometry(), bvhRoot(0) {
+Mesh::Mesh(const int vreserve, const int freserv):
+	Geometry(), bvhRoot(0)
+{
+	assetType = kTypeID;
+	
 	if(vreserve > 0) {
 		vertices.reserve(vreserve);
 		normals.reserve(vreserve);
@@ -114,7 +118,7 @@ size_t Mesh::getFaceCount() const {
 	return faces.size();
 }
 
-Vector3 Mesh::getVaryingAttr(const int faceid, const int attrid, const Vector3 weights) {
+Vector3 Mesh::getVaryingAttr(const int faceid, const int attrid, const Vector3 weights) const {
     const Face &face = faces[faceid];
     const AttrCoord &attrco = face.attrs[attrid];
     const std::vector<Vector3> &attrvec = attributes[attrco.attrid];

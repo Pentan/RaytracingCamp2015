@@ -1,7 +1,7 @@
 ﻿#ifndef R1H_BSDFDIFFUSE_H
 #define R1H_BSDFDIFFUSE_H
 
-#include "bsdf.h"
+#include "bsdfbase.h"
 
 namespace r1h {
 

@@ -17,7 +17,7 @@ public:
 	virtual ~SceneObject();
 	
 	void setGeometry(GeometryRef geom);
-	Geometry* getGeometry();
+	Geometry* getGeometry() const;
 	
 	int addMaterial(MaterialRef matref);
 	Material* getMaterialById(int matid) const;
@@ -26,6 +26,8 @@ public:
 	
 	void setTransform(const Matrix4& m);
 	Matrix4 getTransform() const;
+	
+	Vector3 toLocalPosition(const Vector3& wp) const;
 	
 	AABB getAABB() const;
 	

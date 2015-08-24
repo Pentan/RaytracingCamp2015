@@ -49,6 +49,8 @@ private:
 	
 	class XmlParser;
 	XmlParser* parser;
+	
+	//bool resolveReference();
 };
 
 }

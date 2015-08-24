@@ -14,29 +14,31 @@ public:
     ~Camera();
     
     void setLookat(const Vector3 &eye, const Vector3 &look, const Vector3 &nup);
-    void setAspectRatio(const R1hFPType asp);
-    void setFocal(const R1hFPType focalmm, const R1hFPType sensorwidth=36.0);
-    void setFieldOfView(const R1hFPType vdegree);
-    
+	void setTransform(const Matrix4& transmat);
+	
+	// lens
+	void setFocalLength(const R1hFPType fl);
+	void setFNumber(const R1hFPType fn);
 	void setFocusDistance(const R1hFPType dist);
-	void setApertureRadius(const R1hFPType r);
 	
-	R1hFPType getAspectRatio() const;
+	// sensor
+	void setSensorSize(const R1hFPType w, const R1hFPType h);
+	void setSensorWidthWithAspect(const R1hFPType w, const R1hFPType aspect);
 	
-    /// expects(-1,1)
+	//
+	R1hFPType getSensorAspectRatio() const;
+	
+    /// expects tx and ty are (-1,1)
     Ray getRay(const double tx, const double ty, Random *rnd) const;
     
 private:
-    Vector3 position;
-    Vector3 direction;
-    Vector3 up;
-    Vector3 side;
-    
-    R1hFPType aspect;
-    R1hFPType screenLeft;
+	Matrix4 invTransform;
 	
-	R1hFPType focusDistance;
-	R1hFPType apertureRadius;
+	R1hFPType focalLength;		// [mm]
+	R1hFPType fNumber;			// [N]
+	R1hFPType sensorWidth;		// [mm]
+	R1hFPType sensorHeight;		// [mm]
+	R1hFPType focusDistance;	// [m]
 	
 	bool apertureTest(R1hFPType u, R1hFPType v) const;
 };

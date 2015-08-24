@@ -1,7 +1,7 @@
 ﻿#ifndef R1H_BSDFSPECULAR_H
 #define R1H_BSDFSPECULAR_H
 
-#include "bsdf.h"
+#include "bsdfbase.h"
 #include "intersection.h"
 
 namespace r1h {

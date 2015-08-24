@@ -13,7 +13,7 @@ SceneObject::~SceneObject() {}
 void SceneObject::setGeometry(GeometryRef geom) {
 	geometry = geom;
 }
-Geometry* SceneObject::getGeometry() {
+Geometry* SceneObject::getGeometry() const {
 	return geometry.get();
 }
 
@@ -46,6 +46,10 @@ void SceneObject::setTransform(const Matrix4& m) {
 
 Matrix4 SceneObject::getTransform() const {
 	return transform;
+}
+
+Vector3 SceneObject::toLocalPosition(const Vector3& wp) const {
+	return Matrix4::transformV3(iTransform, wp);
 }
 
 AABB SceneObject::getAABB() const {

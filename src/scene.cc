@@ -23,10 +23,10 @@
 using namespace r1h;
 
 Scene::Scene():
-    camera(0), objectBVH(0), bgMaterial(0)
+    camera(0), objectBVH(0), skyMaterial(0)
 {
     camera = CameraRef(new Camera());
-	bgMaterial = MaterialRef(nullptr);
+	skyMaterial = SkyMaterialRef(new SkyMaterial());
 }
 
 Scene::~Scene() {
@@ -94,14 +94,13 @@ void Scene::setCamera(CameraRef camref) {
 	camera = camref;
 }
 
-Material* Scene::getBackgroundMaterial() {
-	return bgMaterial.get();
+SkyMaterial* Scene::getSkyMaterial() {
+	return skyMaterial.get();
 }
 
-void Scene::setBackgroundMaterial(MaterialRef matref) {
-	bgMaterial = matref;
+void Scene::setSkyMaterial(SkyMaterialRef matref) {
+	skyMaterial = matref;
 }
-
 
 void Scene::prepareRendering() {
 	std::vector<AABB> aabbvec(sceneObjects.size());
@@ -160,8 +159,8 @@ Color Scene::radiance(Renderer::Context *cntx, const Ray &ray) {
 			// not intersected. pick background
 			if(!intersectSceneObjects(traceray, &intersect)) {
 				Color bgcol(0.0);
-				if(bgMaterial.get() != nullptr) {
-					bgcol = bgMaterial->skyColor(traceray);
+				if(skyMaterial.get() != nullptr) {
+					bgcol = skyMaterial->skyColor(traceray);
 				};
 				radiancecol += Color::mul(bgcol, traceray.weight);
 				continue;

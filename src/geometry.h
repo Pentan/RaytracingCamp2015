@@ -27,11 +27,24 @@ public:
     virtual AABB getAABB(const Matrix4& tm) const = 0;
     virtual bool isIntersect(const Ray &ray, Intersection *intersect) const = 0;
 	
-	// optional. ex.:build VBH for mesh
-	virtual void prepareRendering() {}
+	// optional
+	virtual void prepareRendering() { /* ex.:build VBH for mesh */ }
 };
 
 typedef std::shared_ptr<Geometry> GeometryRef;
+
+/// stub
+class StubGeometry : public Geometry {
+public:
+	StubGeometry(const std::string& refid) : Geometry() {
+		assetId = refid;
+		assetType = Asset::Type::kStub;
+	}
+	~StubGeometry() {}
+	
+	virtual AABB getAABB(const Matrix4& tm) const { return AABB(0.0, 0.0); };
+	virtual bool isIntersect(const Ray &ray, Intersection *intersect) const { return false; };
+};
 
 }
 #endif

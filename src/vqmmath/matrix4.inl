@@ -485,7 +485,7 @@ inline Vector3<FPType> Matrix4<FPType>::mulV3(const Matrix4 &ml, const Vector3<F
     FPType vx = ml.m00 * vr.x + ml.m10 * vr.y + ml.m20 * vr.z;
     FPType vy = ml.m01 * vr.x + ml.m11 * vr.y + ml.m21 * vr.z;
     FPType vz = ml.m02 * vr.x + ml.m12 * vr.y + ml.m22 * vr.z;
-    return Vector3<FPType>(vx, vy, vz);;
+    return Vector3<FPType>(vx, vy, vz);
 }
 template<typename FPType>
 inline Vector3<FPType> Matrix4<FPType>::transformV3(const Matrix4 &ml, const Vector3<FPType> &vr) {

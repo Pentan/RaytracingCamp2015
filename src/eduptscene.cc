@@ -3,6 +3,7 @@
 #include "sphere.h"
 #include "sceneobject.h"
 #include "mesh.h"
+#include "materialsky.h"
 
 using namespace r1h;
 
@@ -60,7 +61,7 @@ bool EduptScene::load(Scene *scene, double aspect) {
 		Color diffuse;
 		EduptMaterial::ReflectionType type;
 	} spheres[] = {
-        /*
+		
 		{1e5, Vector3( 1e5 + 1.0, 40.8, 81.6),    Color(), Color(0.75, 0.25, 0.25), EduptMaterial::DIFFUSE},
 		{1e5, Vector3(-1e5 + 99.0, 40.8, 81.6),   Color(), Color(0.25, 0.25, 0.75), EduptMaterial::DIFFUSE},
 		{1e5, Vector3(50.0, 40.8, 1e5),           Color(), Color(0.75, 0.75, 0.75), EduptMaterial::DIFFUSE},
@@ -71,7 +72,7 @@ bool EduptScene::load(Scene *scene, double aspect) {
 		{16.5, Vector3(27.0, 16.5, 47.0),         Color(), Color(0.99, 0.99, 0.99), EduptMaterial::SPECULAR},
 		{16.5, Vector3(77.0, 16.5, 78.0),         Color(), Color(0.99, 0.99, 0.99), EduptMaterial::REFRACTION},
 		{15.0, Vector3(50.0, 90.0, 81.6),         Color(36.0, 36.0, 36.0), Color(), EduptMaterial::DIFFUSE}
-         */
+		/*
         {1e5, Vector3( 1e5 + 1.0, 40.8, 81.6),    Color(), Color(0.75, 0.25, 0.25), EduptMaterial::DIFFUSE},
 		{1e5, Vector3(-1e5 + 99.0, 40.8, 81.6),   Color(), Color(0.25, 0.25, 0.75), EduptMaterial::DIFFUSE},
 		{1e5, Vector3(50.0, 40.8, 1e5),           Color(), Color(0.75, 0.75, 0.75), EduptMaterial::DIFFUSE},
@@ -82,7 +83,7 @@ bool EduptScene::load(Scene *scene, double aspect) {
 		{16.5, Vector3(27.0, 16.5, 47.0),         Color(), Color(0.75, 0.75, 0.25), EduptMaterial::PAINT},
 		{16.5, Vector3(77.0, 16.5, 78.0),         Color(), Color(0.25, 0.75, 0.75), EduptMaterial::PAINT},
 		{15.0, Vector3(50.0, 90.0, 81.6),         Color(36.0, 36.0, 36.0), Color(), EduptMaterial::DIFFUSE}
-        
+        */
 	};
 	int numspheres = sizeof(spheres) /sizeof(SphereDef);
 	
@@ -101,7 +102,7 @@ bool EduptScene::load(Scene *scene, double aspect) {
 		
 		scene->addObject(SceneObjectRef(obj));
 	}
-	
+	/*
 	/////
 	// triangle
 	{
@@ -132,9 +133,11 @@ bool EduptScene::load(Scene *scene, double aspect) {
 		scene->addObject(objref);
 	}
 	/////
+	*/
 	
-	EduptMaterial *bgmat = new EduptMaterial(Color(0.5), Color(0.5), EduptMaterial::BACKGROUND);
-	scene->setBackgroundMaterial(MaterialRef(bgmat));
+	SkyMaterial *bgmat = new SkyMaterial();
+	bgmat->setColor(Color(0.5));
+	scene->setSkyMaterial(SkyMaterialRef(bgmat));
 	
 	Camera *camera = new Camera();
 	camera->setLookat(
@@ -142,8 +145,8 @@ bool EduptScene::load(Scene *scene, double aspect) {
 					  Vector3(50.0, 52.0, 220.0 - 1.0),
 					  Vector3(0.0, 1.0, 0.0)
 	);
-	camera->setFocal(40.0, 30.0 * aspect);
-	camera->setAspectRatio(aspect);
+	camera->setFocalLength(28.0);
+ 	camera->setSensorWidthWithAspect(36.0, aspect);
 	scene->setCamera(CameraRef(camera));
 	
 	return true;
@@ -182,7 +185,7 @@ bool EduptScene::load2(Scene *scene, double aspect) {
 		
 		Matrix4 m;
 		m.translate(sphrdef.pos);
-		m.scale(1.0, 0.5, 1.0);
+		//m.scale(1.0, 0.5, 1.0);
 		//m.rotate(0.7, 0.0, 0.0, 1.0);
 		obj->setTransform(m);
 		
@@ -193,8 +196,9 @@ bool EduptScene::load2(Scene *scene, double aspect) {
 	}
 	
 	// bg
-	EduptMaterial *bgmat = new EduptMaterial(Color(0.5), Color(0.5), EduptMaterial::BACKGROUND);
-	scene->setBackgroundMaterial(MaterialRef(bgmat));
+	SkyMaterial *bgmat = new SkyMaterial();
+	bgmat->setColor(Color(0.5));
+	scene->setSkyMaterial(SkyMaterialRef(bgmat));
 	
 	// camera
 	Camera *camera = new Camera();
@@ -203,10 +207,10 @@ bool EduptScene::load2(Scene *scene, double aspect) {
 					  Vector3(0.0, 0.0, 40.0),
 					  Vector3(0.0, 1.0, 0.0)
 					  );
-	camera->setFocal(40.0, 30.0 * aspect);
-	camera->setAspectRatio(aspect);
-	camera->setFocusDistance(40.0);
-	camera->setApertureRadius(1.5);
+	camera->setFocalLength(28.0);
+ 	camera->setSensorWidthWithAspect(36.0, aspect);
+	camera->setFocusDistance(1.0);
+	camera->setFNumber(1.0);
 	scene->setCamera(CameraRef(camera));
 	
 	return true;

@@ -7,6 +7,7 @@
 #include "renderer.h"
 #include "sceneobject.h"
 #include "material.h"
+#include "materialsky.h"
 #include "camera.h"
 #include "intersection.h"
 #include "bvhnode.h"
@@ -33,8 +34,8 @@ public:
     Camera* getCamera();
 	void setCamera(CameraRef camref);
     
-	Material* getBackgroundMaterial();
-	void setBackgroundMaterial(MaterialRef matref);
+	SkyMaterial* getSkyMaterial();
+	void setSkyMaterial(SkyMaterialRef matref);
 	
 	void prepareRendering();
 	
@@ -49,7 +50,7 @@ private:
     std::vector<SceneObjectRef> sceneObjects;
     BVHNode *objectBVH;
     
-    MaterialRef bgMaterial;
+    SkyMaterialRef  skyMaterial;
 	
 	bool intersectSceneObjects(const Ray &ray, Intersection *intersect);
 };

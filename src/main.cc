@@ -45,14 +45,15 @@ int main(int argc, char *argv[]) {
     Renderer *render = new Renderer();
     Renderer::Config renderConf = render->getConfig();
 	
-    renderConf.width = 1280 / 4;
-    renderConf.height = 720 / 4;
-	//renderConf.width = 256 / 2;
-	//renderConf.height = 256 / 2;
-	renderConf.samples = 8;
+    //renderConf.width = 1280 / 4;
+    //renderConf.height = 720 / 4;
+	renderConf.width = 640 / 4;
+	renderConf.height = 480 / 4;
+	renderConf.samples = 16;
 	renderConf.subSamples = 2;
 	renderConf.tileSize = 64;
-    renderConf.maxDepth = 12;
+	renderConf.minDepth = 2;
+    renderConf.maxDepth = 4;
 	
 	// parse render config from arguments?
 	
@@ -66,7 +67,7 @@ int main(int argc, char *argv[]) {
 	bool loaded = false;
 	
 	scene = new Scene();
-	
+	/*
 	//+++++
 	{
 		XMLSceneLoader loader;
@@ -75,7 +76,7 @@ int main(int argc, char *argv[]) {
 		return 0;
 	}
 	//+++++
-	
+	*/
 	if(argc > 1) {
 		loaded = scene->loadWavefrontObj(argv[1]);
 	} else {
@@ -86,8 +87,8 @@ int main(int argc, char *argv[]) {
 		//loaded = scene->loadWavefrontObj("models/manyobjs.obj");
 		
 		//+++++ edupt cornel box scene +++++
-		//EduptScene::load(scene, (double)renderConf.width / renderConf.height);
-		EduptScene::load2(scene, (double)renderConf.width / renderConf.height);
+		EduptScene::load(scene, (double)renderConf.width / renderConf.height);
+		//EduptScene::load2(scene, (double)renderConf.width / renderConf.height);
 	}
 	
     printf("scene loaded [%.4f sec]\n", gettimeofday_sec() - startTime);
