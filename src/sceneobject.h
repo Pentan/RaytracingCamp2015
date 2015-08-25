@@ -18,6 +18,7 @@ public:
 	
 	void setGeometry(GeometryRef geom);
 	Geometry* getGeometry() const;
+	GeometryRef getGeometryRef();
 	
 	int addMaterial(MaterialRef matref);
 	Material* getMaterialById(int matid) const;

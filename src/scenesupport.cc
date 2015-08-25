@@ -46,13 +46,13 @@ Color ObjMaterial::skyColor(const Ray &ray) const {
 	return Color(1.0) * (ray.direction.y * 0.5 + 0.5);
 }
 
-Color ObjMaterial::albedo(const SceneObject *obj, const Intersection &isect) const {
+Color ObjMaterial::getReflectance(const SceneObject *obj, const Intersection &isect) const {
 	return diffuseColor;
 }
-Color ObjMaterial::emission(const SceneObject *obj, const Intersection &isect) const {
+Color ObjMaterial::getEmittance(const SceneObject *obj, const Intersection &isect) const {
 	return emitColor;
 }
-void ObjMaterial::makeNextRays(const Ray &ray, const Intersection &isect, const int depth, Random *rnd, std::vector<Ray> *outvecs) const {
+void ObjMaterial::makeNextRays(const Ray &ray, const SceneObject *obj, const Intersection &isect, const int depth, Random *rnd, std::vector<Ray> *outvecs) const {
 	bsdf->makeNextRays(ray, isect, depth, rnd, outvecs);
 }
 

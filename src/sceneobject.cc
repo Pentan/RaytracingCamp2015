@@ -17,6 +17,10 @@ Geometry* SceneObject::getGeometry() const {
 	return geometry.get();
 }
 
+GeometryRef SceneObject::getGeometryRef() {
+	return geometry;
+}
+
 int SceneObject::addMaterial(MaterialRef matref) {
 	materials.push_back(matref);
 	return (int)materials.size() - 1;

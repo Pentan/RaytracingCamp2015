@@ -8,7 +8,6 @@
 namespace vqm {
 
 template<typename FPType> union Vector3 {
-    struct {FPType x_, y_, z_;};
     struct {FPType x, y, z;};
     struct {FPType r, g, b;};
     struct {FPType s, t, p;};

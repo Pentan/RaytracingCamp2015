@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
 	bool loaded = false;
 	
 	scene = new Scene();
-	/*
+	
 	//+++++
 	{
 		XMLSceneLoader loader;
@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
 		return 0;
 	}
 	//+++++
-	*/
+	
 	if(argc > 1) {
 		loaded = scene->loadWavefrontObj(argv[1]);
 	} else {

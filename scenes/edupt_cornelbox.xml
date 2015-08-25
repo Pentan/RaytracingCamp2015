@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<scene version="0.1">
+	<!-- config -->
+	<!--
+		threads=0 : auto detect
+	-->
+	<renderer
+		type="pathtrace"
+		width="640"
+		height="480"
+		subSamples="2"
+		samples="2"
+		minDepth="3"
+		maxDepth="32"
+		tileSize="32"
+		threads="0"
+		output="outedupt.bmp"/>
+	
+	<camera>
+		<transform>
+			<lookat 
+				position="50.0, 52.0, 220.0"
+				lookat	="50.0, 52.0, 200.0"
+				up		="0.0, 1.0, 0.0"/>
+		</transform>
+		<lens type="pinhole" focalLength="28.0" fNumber="0.0"/>
+		<sensor width="36.0" height="24.0" aspect="1.333"/>
+	</camera>
+	
+	<sky type="sphere">
+		<color type="rgb" r="0.5" g="0.5" b="0.5"/>
+		<texture type="image" src="sky.hdr" map="sphere" />
+	</sky>
+	
+	<library></library>
+	
+	<!-- box -->
+	<object id="wallRed">
+		<geometry type="sphere" position="100001.0, 40.8, 81.6" radius="1e5"/>
+		<material type="singlebsdf">
+			<bsdf type="diffuse"/>
+			<reflectance color="0.75, 0.25, 0.25"/>
+			<emittance color="0.0, 0.0, 0.0"/>
+		</material>
+	</object>
+	<object id="wallBlue">
+		<geometry type="sphere" position="-99901.0, 40.8, 81.6" radius="1e5"/>
+		<material type="singlebsdf">
+			<bsdf type="diffuse"/>
+			<reflectance color="0.25, 0.25, 0.75"/>
+			<emittance color="0.0, 0.0, 0.0"/>
+		</material>
+	</object>
+	
+	<object id="wallGray">
+		<geometry type="sphere" position="50.0, 40.8, 1e5" radius="1e5"/>
+		<material type="singlebsdf">
+			<bsdf type="diffuse"/>
+			<reflectance color="0.75, 0.75, 0.75"/>
+			<emittance color="0.0, 0.0, 0.0"/>
+		</material>
+	</object>
+	<object id="wallBlack">
+		<geometry type="sphere" position="50.0, 40.8, 100250.0" radius="1e5"/>
+		<material type="singlebsdf">
+			<bsdf type="diffuse"/>
+			<reflectance color="0.0, 0.0, 0.0"/>
+			<emittance color="0.0, 0.0, 0.0"/>
+		</material>
+	</object>
+	
+	<object id="floorGray">
+		<geometry type="sphere" position="50.0, 1e5, 81.6" radius="1e5"/>
+		<material type="singlebsdf">
+			<bsdf type="diffuse"/>
+			<reflectance color="0.75, 0.75, 0.75"/>
+			<emittance color="0.0, 0.0, 0.0"/>
+		</material>
+	</object>
+	<object id="ceilGray">
+		<geometry type="sphere" position="50.0, 100081.6, 81.6" radius="1e5"/>
+		<material type="singlebsdf">
+			<bsdf type="diffuse"/>
+			<reflectance color="0.75, 0.75, 0.75"/>
+			<emittance color="0.0, 0.0, 0.0"/>
+		</material>
+	</object>
+	
+	<!-- inside objects -->
+	<object id="diffuseSphere">
+		<geometry type="sphere" position="65.0, 20.0, 20.0" radius="20.0"/>
+		<material type="singlebsdf">
+			<bsdf type="diffuse"/>
+			<reflectance color="0.25, 0.75, 0.25"/>
+			<emittance color="0.0, 0.0, 0.0"/>
+		</material>
+	</object>
+	<object id="specularSphere">
+		<geometry type="sphere" position="27.0, 16.5, 47.0" radius="16.5"/>
+		<material type="singlebsdf">
+			<bsdf type="specular"/>
+			<reflectance color="0.99, 0.99, 0.99"/>
+			<emittance color="0.0, 0.0, 0.0"/>
+		</material>
+	</object>
+	<object id="refractionSphere">
+		<geometry type="sphere" position="77.0, 16.5, 78.0" radius="16.5"/>
+		<material type="singlebsdf">
+			<bsdf type="refraction" ior="1.33"/>
+			<reflectance color="0.99, 0.99, 0.99"/>
+			<emittance color="0.0, 0.0, 0.0"/>
+		</material>
+	</object>
+	
+	<!-- light source object -->
+	<object id="emissionSphere" emitter="true">
+		<geometry type="sphere" position="50.0, 90.0, 81.6" radius="15.0"/>
+		<material type="singlebsdf">
+			<bsdf type="diffuse"/>
+			<reflectance color="0.0, 0.0, 0.0"/>
+			<emittance color="36.0, 36.0, 36.0"/>
+		</material>
+	</object>
+</scene>

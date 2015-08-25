@@ -27,6 +27,8 @@ public:
 	Scene* getScene();
 	Renderer* getRederer();
 	
+	std::string getBasePath() const;
+	
 	int registerAsset(std::string key, GeometryRef geom);
 	int registerAsset(std::string key, MaterialRef mat);
 	int registerAsset(std::string key, TextureRef tex);

@@ -2,10 +2,13 @@
 #ifndef R1H_MATERIAL_SINGLE_BSDF_H
 #define R1H_MATERIAL_SINGLE_BSDF_H
 
+#include <vector>
+
 #include "r1htypes.h"
 #include "material.h"
 #include "bsdf.h"
 #include "texture.h"
+#include "ray.h"
 
 namespace r1h {
 
@@ -14,26 +17,26 @@ public:
 	SingleBSDFMaterial(BSDFRef bsdf=nullptr);
 	~SingleBSDFMaterial();
 	
-	void setAlbedoColor(const Color col);
-	void setAlbedoTexture(TextureRef tex);
-	Texture* getAlbedoTexture() const;
+	void setReflectanceColor(const Color col);
+	void setReflectanceTexture(TextureRef tex);
+	Texture* getReflectanceTexture() const;
 	
-	void setEmissionColor(const Color col);
-	void setEmissionTexture(TextureRef tex);
-	Texture* getEmissionTexture() const;
+	void setEmittanceColor(const Color col);
+	void setEmittanceTexture(TextureRef tex);
+	Texture* getEmittanceTexture() const;
 	
 	void setBSDF(BSDFRef newbsdf);
 	BSDF* getBSDF() const;
 	
-	virtual Color albedo(const SceneObject *obj, const Intersection &isect) const;
-	virtual Color emission(const SceneObject *obj, const Intersection &isect) const;
-	virtual void makeNextRays(const Ray &ray, const Intersection &isect, const int depth, Random *rnd, std::vector<Ray> *outvecs) const;
+	virtual Color getReflectance(const SceneObject *obj, const Intersection &isect) const;
+	virtual Color getEmittance(const SceneObject *obj, const Intersection &isect) const;
+	virtual void makeNextRays(const Ray &ray, const SceneObject *obj, const Intersection &isect, const int depth, Random *rnd, std::vector<Ray> *outvecs) const;
 	
 private:
 	BSDFRef bsdf;
 	
-	TextureRef albedoTex;
-	TextureRef emissionTex;
+	TextureRef reflectanceTex;
+	TextureRef emittanceTex;
 };
 
 }

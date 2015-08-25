@@ -11,33 +11,6 @@
 
 namespace r1h {
 
-/// material
-class EduptMaterial : public Material {
-public:
-	enum ReflectionType {
-		DIFFUSE,
-		SPECULAR,
-		REFRACTION,
-        PAINT,
-		BACKGROUND
-	};
-	
-    EduptMaterial(const Color &col, const Color &emit, const ReflectionType reft);
-    ~EduptMaterial();
-    
-	Color skyColor(const Ray &ray) const;
-    Color albedo(const SceneObject *obj, const Intersection &hp) const;
-    Color emission(const SceneObject *obj, const Intersection &hp) const;
-    void makeNextRays(const Ray &ray, const Intersection &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs) const;
-	
-private:
-    Color color_;
-    Color emission_;
-    ReflectionType reflection_type_;
-    
-    BSDF *bsdf;
-};
-
 /// scene
 class EduptScene {
 public:

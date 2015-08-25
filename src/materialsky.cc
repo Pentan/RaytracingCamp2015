@@ -37,14 +37,14 @@ void SkyMaterial::setTransform(const Matrix4& m) {
 	transform = m;
 }
 
-Color SkyMaterial::albedo(const SceneObject *obj, const Intersection &isect) const {
+Color SkyMaterial::getReflectance(const SceneObject *obj, const Intersection &isect) const {
 	return Color(0.0);
 }
 
-Color SkyMaterial::emission(const SceneObject *obj, const Intersection &isect) const {
+Color SkyMaterial::getEmittance(const SceneObject *obj, const Intersection &isect) const {
 	return Color(0.0);
 }
 
-void SkyMaterial::makeNextRays(const Ray &ray, const Intersection &isect, const int depth, Random *rnd, std::vector<Ray> *outvecs) const {
+void SkyMaterial::makeNextRays(const Ray &ray, const SceneObject *obj, const Intersection &isect, const int depth, Random *rnd, std::vector<Ray> *outvecs) const {
 	// noop
 }

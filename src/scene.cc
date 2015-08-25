@@ -171,11 +171,11 @@ Color Scene::radiance(Renderer::Context *cntx, const Ray &ray) {
 			
 			// from hit face info
 			const Material *hitmat = hitobject->getMaterialById(intersect.materialId);
-			const Color albedocol = hitmat->albedo(hitobject, intersect);
-            const Color emitcol = hitmat->emission(hitobject, intersect);
+			const Color reflectance = hitmat->getReflectance(hitobject, intersect);
+            const Color emittance = hitmat->getEmittance(hitobject, intersect);
             
 #if 1
-            radiancecol += Color::mul(emitcol, traceray.weight);
+            radiancecol += Color::mul(emittance, traceray.weight);
 #else
 			//+++++
 			// for debugging
@@ -187,7 +187,7 @@ Color Scene::radiance(Renderer::Context *cntx, const Ray &ray) {
 			//continue;
             //+++++
 #endif
-            double russianprob = std::max(albedocol.r, std::max(albedocol.g, albedocol.b));
+            double russianprob = std::max(reflectance.r, std::max(reflectance.g, reflectance.b));
             if(depth > depthLimit) {
                 russianprob *= pow(0.5, depth - depthLimit);
             }
@@ -198,14 +198,14 @@ Color Scene::radiance(Renderer::Context *cntx, const Ray &ray) {
                 continue;
             }
             
-            const Color nextweight = albedocol * russianprob;
+            //const Color nextweight = reflectance * russianprob;
             
             tmprays->clear();
-            hitmat->makeNextRays(traceray, intersect, depth, crnd, tmprays);
+            hitmat->makeNextRays(traceray, hitobject, intersect, depth, crnd, tmprays);
             for(int j = 0; j < (int)tmprays->size(); j++) {
                 Ray &nwray = tmprays->at(j);
                 nwray.smallOffset(intersect.normal);
-                nwray.weight = Color::mul(nwray.weight, Color::mul(traceray.weight, nextweight));
+                nwray.weight = Color::mul(nwray.weight, traceray.weight * russianprob);
                 nextrays->push_back(nwray);
             }
 		}

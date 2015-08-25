@@ -18,9 +18,9 @@ public:
 	void setTransform(const Matrix4& m);
 	
 	// These methods are noop
-	virtual Color albedo(const SceneObject *obj, const Intersection &isect) const;
-	virtual Color emission(const SceneObject *obj, const Intersection &isect) const;
-	virtual void makeNextRays(const Ray &ray, const Intersection &isect, const int depth, Random *rnd, std::vector<Ray> *outvecs) const;
+	virtual Color getReflectance(const SceneObject *obj, const Intersection &isect) const;
+	virtual Color getEmittance(const SceneObject *obj, const Intersection &isect) const;
+	virtual void makeNextRays(const Ray &ray, const SceneObject *obj, const Intersection &isect, const int depth, Random *rnd, std::vector<Ray> *outvecs) const;
 	
 private:
 	TextureRef texture;

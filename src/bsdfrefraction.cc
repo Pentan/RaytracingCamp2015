@@ -72,4 +72,6 @@ void RefractionBSDF::makeNextRays(const Ray &ray, const Intersection &hp, const 
 	}
 }
 
-
+void RefractionBSDF::setIor(R1hFPType nior) {
+	ior = nior;
+}

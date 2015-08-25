@@ -12,24 +12,24 @@ SingleBSDFMaterial::SingleBSDFMaterial(BSDFRef bsdf):
 SingleBSDFMaterial::~SingleBSDFMaterial() {
 }
 
-void SingleBSDFMaterial::setAlbedoColor(const Color col) {
-	albedoTex = TextureRef(new ConstantColorTexture(col));
+void SingleBSDFMaterial::setReflectanceColor(const Color col) {
+	reflectanceTex = TextureRef(new ConstantColorTexture(col));
 }
-void SingleBSDFMaterial::setAlbedoTexture(TextureRef tex) {
-	albedoTex = tex;
+void SingleBSDFMaterial::setReflectanceTexture(TextureRef tex) {
+	reflectanceTex = tex;
 }
-Texture* SingleBSDFMaterial::getAlbedoTexture() const {
-	return albedoTex.get();
+Texture* SingleBSDFMaterial::getReflectanceTexture() const {
+	return reflectanceTex.get();
 }
 
-void SingleBSDFMaterial::setEmissionColor(const Color col) {
-	emissionTex = TextureRef(new ConstantColorTexture(col));
+void SingleBSDFMaterial::setEmittanceColor(const Color col) {
+	emittanceTex = TextureRef(new ConstantColorTexture(col));
 }
-void SingleBSDFMaterial::setEmissionTexture(TextureRef tex) {
-	emissionTex = tex;
+void SingleBSDFMaterial::setEmittanceTexture(TextureRef tex) {
+	emittanceTex = tex;
 }
-Texture* SingleBSDFMaterial::getEmissionTexture() const {
-	return emissionTex.get();
+Texture* SingleBSDFMaterial::getEmittanceTexture() const {
+	return emittanceTex.get();
 }
 
 void SingleBSDFMaterial::setBSDF(BSDFRef newbsdf) {
@@ -40,16 +40,20 @@ BSDF* SingleBSDFMaterial::getBSDF() const {
 	return bsdf.get();
 }
 
-Color SingleBSDFMaterial::albedo(const SceneObject *obj, const Intersection &isect) const {
-	return albedoTex->sample(obj, &isect);
+Color SingleBSDFMaterial::getReflectance(const SceneObject *obj, const Intersection &isect) const {
+	return reflectanceTex->sample(obj, &isect);
 }
 
-Color SingleBSDFMaterial::emission(const SceneObject *obj, const Intersection &isect) const {
-	return emissionTex->sample(obj, &isect);
+Color SingleBSDFMaterial::getEmittance(const SceneObject *obj, const Intersection &isect) const {
+	return emittanceTex->sample(obj, &isect);
 }
 
-void SingleBSDFMaterial::makeNextRays(const Ray &ray, const Intersection &isect, const int depth, Random *rnd, std::vector<Ray> *outvecs) const {
+void SingleBSDFMaterial::makeNextRays(const Ray &ray, const SceneObject *obj, const Intersection &isect, const int depth, Random *rnd, std::vector<Ray> *outvecs) const {
 	bsdf->makeNextRays(ray, isect, depth, rnd, outvecs);
+	for(size_t i = 0; i < outvecs->size(); i++) {
+		Ray &tmpray = outvecs->at(i);
+		tmpray.weight = Vector3::mul(tmpray.weight, reflectanceTex->sample(obj, &isect));
+	}
 }
 
 

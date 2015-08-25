@@ -17,9 +17,10 @@ public:
     Material() {}
     virtual ~Material() {}
 	
-    virtual Color albedo(const SceneObject *obj, const Intersection &isect) const = 0;
-    virtual Color emission(const SceneObject *obj, const Intersection &isect) const = 0;
-    virtual void makeNextRays(const Ray &ray, const Intersection &isect, const int depth, Random *rnd, std::vector<Ray> *outvecs) const = 0;
+    virtual Color getReflectance(const SceneObject *obj, const Intersection &isect) const = 0;
+    virtual Color getEmittance(const SceneObject *obj, const Intersection &isect) const = 0;
+	// must be ray.weight = reflectance;
+	virtual void makeNextRays(const Ray &ray, const SceneObject *obj, const Intersection &isect, const int depth, Random *rnd, std::vector<Ray> *outvecs) const = 0;
 };
 
 typedef std::shared_ptr<Material> MaterialRef;
@@ -33,9 +34,9 @@ public:
 	}
 	~StubMaterial() {}
 	
-	virtual Color albedo(const SceneObject *obj, const Intersection &isect) const { return Color(0.0); };
-	virtual Color emission(const SceneObject *obj, const Intersection &isect) const { return Color(1.0, 0.0, 0.0); };
-	virtual void makeNextRays(const Ray &ray, const Intersection &isect, const int depth, Random *rnd, std::vector<Ray> *outvecs) const {};
+	virtual Color getReflectance(const SceneObject *obj, const Intersection &isect) const { return Color(0.0); };
+	virtual Color getEmittance(const SceneObject *obj, const Intersection &isect) const { return Color(1.0, 0.0, 0.0); };
+	virtual void makeNextRays(const Ray &ray, const SceneObject *obj, const Intersection &isect, const int depth, Random *rnd, std::vector<Ray> *outvecs) const {};
 };
 
 }

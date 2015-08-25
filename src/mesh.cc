@@ -126,7 +126,7 @@ Vector3 Mesh::getVaryingAttr(const int faceid, const int attrid, const Vector3 w
     const Vector3 a1 = attrvec[attrco.co1];
     const Vector3 a2 = attrvec[attrco.co2];
     
-    return a0 * weights.x_ + a1 * weights.y_ + a2 * weights.z_;
+    return a0 * weights.x + a1 * weights.y + a2 * weights.z;
 }
 
 void Mesh::postProcess() {

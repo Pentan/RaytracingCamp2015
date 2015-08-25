@@ -10,7 +10,7 @@ void TranslucentBSDF::makeNextRays(const Ray &ray, const Intersection &hp, const
 	Vector3 w, u, v;
 	w = hp.orientingNormal(ray) * -1.0;
 	
-	if(fabs(w.x_) > kEPS) {
+	if(fabs(w.x) > kEPS) {
 		u = Vector3::normalized(Vector3::cross(Vector3(0.0, 1.0, 0.0), w));
 	} else {
 		u = Vector3::normalized(Vector3::cross(Vector3(1.0, 0.0, 0.0), w));

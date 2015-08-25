@@ -3,53 +3,17 @@
 #include "sphere.h"
 #include "sceneobject.h"
 #include "mesh.h"
-#include "materialsky.h"
+#include "material.h"
 
 using namespace r1h;
 
-/// Material
-EduptMaterial::EduptMaterial(const Color &col, const Color &emit, const ReflectionType reft):
-	color_(col), emission_(emit), reflection_type_(reft)
-{
-	switch(reflection_type_) {
-		case DIFFUSE:
-			bsdf = new DiffuseBSDF();
-			break;
-		case SPECULAR:
-			bsdf = new SpecularBSDF();
-			break;
-		case REFRACTION:
-			bsdf = new RefractionBSDF();
-			break;
-        case PAINT:
-            bsdf = new PaintBSDF();
-			break;
-		case BACKGROUND:
-			bsdf = nullptr;
-			break;
-	}
-}
-
-EduptMaterial::~EduptMaterial() {
-	//printf("~EduptMaterial:%p\n", this);
-	if(bsdf) {
-		delete bsdf;
-	}
-}
-
-Color EduptMaterial::skyColor(const Ray &ray) const {
-	return color_;
-}
-
-Color EduptMaterial::albedo(const SceneObject *obj, const Intersection &hp) const {
-	return color_;
-}
-Color EduptMaterial::emission(const SceneObject *obj, const Intersection &hp) const {
-	return emission_;
-}
-void EduptMaterial::makeNextRays(const Ray &ray, const Intersection &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs) const {
-	bsdf->makeNextRays(ray, hp, depth, rnd, outvecs);
-}
+enum ReflectionType {
+	DIFFUSE,
+	SPECULAR,
+	REFRACTION,
+	PAINT,
+	BACKGROUND
+};
 
 /// scene
 bool EduptScene::load(Scene *scene, double aspect) {
@@ -59,30 +23,30 @@ bool EduptScene::load(Scene *scene, double aspect) {
 		Vector3 pos;
 		Color emittion;
 		Color diffuse;
-		EduptMaterial::ReflectionType type;
+		ReflectionType type;
 	} spheres[] = {
 		
-		{1e5, Vector3( 1e5 + 1.0, 40.8, 81.6),    Color(), Color(0.75, 0.25, 0.25), EduptMaterial::DIFFUSE},
-		{1e5, Vector3(-1e5 + 99.0, 40.8, 81.6),   Color(), Color(0.25, 0.25, 0.75), EduptMaterial::DIFFUSE},
-		{1e5, Vector3(50.0, 40.8, 1e5),           Color(), Color(0.75, 0.75, 0.75), EduptMaterial::DIFFUSE},
-		{1e5, Vector3(50.0, 40.8, 1e5 + 250.0),   Color(), Color(0.0),                 EduptMaterial::DIFFUSE},
-		{1e5, Vector3(50.0, 1e5, 81.6),           Color(), Color(0.75, 0.75, 0.75), EduptMaterial::DIFFUSE},
-		{1e5, Vector3(50.0, 1e5 + 81.6, 81.6),    Color(), Color(0.75, 0.75, 0.75), EduptMaterial::DIFFUSE},
-		{20.0, Vector3(65.0, 20.0, 20.0),         Color(), Color(0.25, 0.75, 0.25), EduptMaterial::DIFFUSE},
-		{16.5, Vector3(27.0, 16.5, 47.0),         Color(), Color(0.99, 0.99, 0.99), EduptMaterial::SPECULAR},
-		{16.5, Vector3(77.0, 16.5, 78.0),         Color(), Color(0.99, 0.99, 0.99), EduptMaterial::REFRACTION},
-		{15.0, Vector3(50.0, 90.0, 81.6),         Color(36.0, 36.0, 36.0), Color(), EduptMaterial::DIFFUSE}
+		{1e5, Vector3( 1e5 + 1.0, 40.8, 81.6),    Color(), Color(0.75, 0.25, 0.25), DIFFUSE},
+		{1e5, Vector3(-1e5 + 99.0, 40.8, 81.6),   Color(), Color(0.25, 0.25, 0.75), DIFFUSE},
+		{1e5, Vector3(50.0, 40.8, 1e5),           Color(), Color(0.75, 0.75, 0.75), DIFFUSE},
+		{1e5, Vector3(50.0, 40.8, 1e5 + 250.0),   Color(), Color(0.0),              DIFFUSE},
+		{1e5, Vector3(50.0, 1e5, 81.6),           Color(), Color(0.75, 0.75, 0.75), DIFFUSE},
+		{1e5, Vector3(50.0, 1e5 + 81.6, 81.6),    Color(), Color(0.75, 0.75, 0.75), DIFFUSE},
+		{20.0, Vector3(65.0, 20.0, 20.0),         Color(), Color(0.25, 0.75, 0.25), DIFFUSE},
+		{16.5, Vector3(27.0, 16.5, 47.0),         Color(), Color(0.99, 0.99, 0.99), SPECULAR},
+		{16.5, Vector3(77.0, 16.5, 78.0),         Color(), Color(0.99, 0.99, 0.99), REFRACTION},
+		{15.0, Vector3(50.0, 90.0, 81.6),         Color(36.0, 36.0, 36.0), Color(), DIFFUSE}
 		/*
-        {1e5, Vector3( 1e5 + 1.0, 40.8, 81.6),    Color(), Color(0.75, 0.25, 0.25), EduptMaterial::DIFFUSE},
-		{1e5, Vector3(-1e5 + 99.0, 40.8, 81.6),   Color(), Color(0.25, 0.25, 0.75), EduptMaterial::DIFFUSE},
-		{1e5, Vector3(50.0, 40.8, 1e5),           Color(), Color(0.75, 0.75, 0.75), EduptMaterial::DIFFUSE},
-		{1e5, Vector3(50.0, 40.8, 1e5 + 250.0),   Color(), Color(0.0),                 EduptMaterial::DIFFUSE},
-		{1e5, Vector3(50.0, 1e5, 81.6),           Color(), Color(0.75, 0.75, 0.75), EduptMaterial::DIFFUSE},
-		{1e5, Vector3(50.0, 1e5 + 81.6, 81.6),    Color(), Color(0.75, 0.75, 0.75), EduptMaterial::DIFFUSE},
-		{20.0, Vector3(65.0, 20.0, 20.0),         Color(), Color(0.25, 0.75, 0.25), EduptMaterial::DIFFUSE},
-		{16.5, Vector3(27.0, 16.5, 47.0),         Color(), Color(0.75, 0.75, 0.25), EduptMaterial::PAINT},
-		{16.5, Vector3(77.0, 16.5, 78.0),         Color(), Color(0.25, 0.75, 0.75), EduptMaterial::PAINT},
-		{15.0, Vector3(50.0, 90.0, 81.6),         Color(36.0, 36.0, 36.0), Color(), EduptMaterial::DIFFUSE}
+        {1e5, Vector3( 1e5 + 1.0, 40.8, 81.6),    Color(), Color(0.75, 0.25, 0.25), DIFFUSE},
+		{1e5, Vector3(-1e5 + 99.0, 40.8, 81.6),   Color(), Color(0.25, 0.25, 0.75), DIFFUSE},
+		{1e5, Vector3(50.0, 40.8, 1e5),           Color(), Color(0.75, 0.75, 0.75), DIFFUSE},
+		{1e5, Vector3(50.0, 40.8, 1e5 + 250.0),   Color(), Color(0.0),              DIFFUSE},
+		{1e5, Vector3(50.0, 1e5, 81.6),           Color(), Color(0.75, 0.75, 0.75), DIFFUSE},
+		{1e5, Vector3(50.0, 1e5 + 81.6, 81.6),    Color(), Color(0.75, 0.75, 0.75), DIFFUSE},
+		{20.0, Vector3(65.0, 20.0, 20.0),         Color(), Color(0.25, 0.75, 0.25), DIFFUSE},
+		{16.5, Vector3(27.0, 16.5, 47.0),         Color(), Color(0.75, 0.75, 0.25), PAINT},
+		{16.5, Vector3(77.0, 16.5, 78.0),         Color(), Color(0.25, 0.75, 0.75), PAINT},
+		{15.0, Vector3(50.0, 90.0, 81.6),         Color(36.0, 36.0, 36.0), Color(), DIFFUSE}
         */
 	};
 	int numspheres = sizeof(spheres) /sizeof(SphereDef);
@@ -95,9 +59,26 @@ bool EduptScene::load(Scene *scene, double aspect) {
 		Sphere *sphere = new Sphere(sphrdef.r, sphrdef.pos);
 		obj->setGeometry(GeometryRef(sphere));
 		
-		EduptMaterial *mat = new EduptMaterial(sphrdef.diffuse, sphrdef.emittion, sphrdef.type);
-		//EduptMaterial *mat = new EduptMaterial(Vector3(0.0), Vector3(1.0), sphrdef.type);
-		//EduptMaterial *mat = new EduptMaterial(sphrdef.diffuse, sphrdef.diffuse, sphrdef.type);
+		SingleBSDFMaterial *mat = new SingleBSDFMaterial();
+		switch(sphrdef.type) {
+			case DIFFUSE:
+				mat->setBSDF(BSDFRef(new DiffuseBSDF()));
+				break;
+			case SPECULAR:
+				mat->setBSDF(BSDFRef(new SpecularBSDF()));
+				break;
+			case REFRACTION:
+				mat->setBSDF(BSDFRef(new RefractionBSDF()));
+				break;
+			case PAINT:
+				mat->setBSDF(BSDFRef(new PaintBSDF()));
+				break;
+			case BACKGROUND:
+				mat = nullptr;
+				break;
+		}
+		mat->setReflectanceColor(sphrdef.diffuse);
+		mat->setEmittanceColor(sphrdef.emittion);
 		obj->addMaterial(MaterialRef(mat));
 		
 		scene->addObject(SceneObjectRef(obj));
@@ -129,7 +110,7 @@ bool EduptScene::load(Scene *scene, double aspect) {
 		mesh->buildBVH();
 		
 		objref->setGeometry(GeometryRef(mesh));
-		objref->addMaterial(MaterialRef(new EduptMaterial(Color(0.25, 0.75, 0.25), Color(), EduptMaterial::DIFFUSE)));
+		objref->addMaterial(MaterialRef(new EduptMaterial(Color(0.25, 0.75, 0.25), Color(), DIFFUSE)));
 		scene->addObject(objref);
 	}
 	/////
@@ -159,16 +140,16 @@ bool EduptScene::load2(Scene *scene, double aspect) {
 		Vector3 pos;
 		Color emittion;
 		Color diffuse;
-		EduptMaterial::ReflectionType type;
+		ReflectionType type;
 	} spheres[] = {
-		{10.0, Vector3(-15.0, 0.0, 20.0),         Color(), Color(0.0 , 0.75, 0.25), EduptMaterial::DIFFUSE},
-		{10.0, Vector3( 15.0, 0.0, 20.0),         Color(), Color(0.5 , 0.75, 0.5 ), EduptMaterial::DIFFUSE},
-		{10.0, Vector3(-15.0, 0.0, 40.0),         Color(), Color(0.75, 0.0 , 0.25), EduptMaterial::DIFFUSE},
-		{10.0, Vector3( 15.0, 0.0, 40.0),         Color(), Color(0.75, 0.5 , 0.5 ), EduptMaterial::DIFFUSE},
-		{10.0, Vector3(-15.0, 0.0, 60.0),         Color(), Color(0.0 , 0.25, 0.75), EduptMaterial::DIFFUSE},
-		{10.0, Vector3( 15.0, 0.0, 60.0),         Color(), Color(0.5 , 0.5 , 0.75), EduptMaterial::DIFFUSE},
-		{10.0, Vector3(-15.0, 0.0, 80.0),         Color(), Color(0.75, 0.75, 0.0 ), EduptMaterial::DIFFUSE},
-		{10.0, Vector3( 15.0, 0.0, 80.0),         Color(), Color(0.75, 0.5 , 0.5 ), EduptMaterial::DIFFUSE},
+		{10.0, Vector3(-15.0, 0.0, 20.0),         Color(), Color(0.0 , 0.75, 0.25), DIFFUSE},
+		{10.0, Vector3( 15.0, 0.0, 20.0),         Color(), Color(0.5 , 0.75, 0.5 ), DIFFUSE},
+		{10.0, Vector3(-15.0, 0.0, 40.0),         Color(), Color(0.75, 0.0 , 0.25), DIFFUSE},
+		{10.0, Vector3( 15.0, 0.0, 40.0),         Color(), Color(0.75, 0.5 , 0.5 ), DIFFUSE},
+		{10.0, Vector3(-15.0, 0.0, 60.0),         Color(), Color(0.0 , 0.25, 0.75), DIFFUSE},
+		{10.0, Vector3( 15.0, 0.0, 60.0),         Color(), Color(0.5 , 0.5 , 0.75), DIFFUSE},
+		{10.0, Vector3(-15.0, 0.0, 80.0),         Color(), Color(0.75, 0.75, 0.0 ), DIFFUSE},
+		{10.0, Vector3( 15.0, 0.0, 80.0),         Color(), Color(0.75, 0.5 , 0.5 ), DIFFUSE},
 
 	};
 	int numspheres = sizeof(spheres) /sizeof(SphereDef);
@@ -189,7 +170,26 @@ bool EduptScene::load2(Scene *scene, double aspect) {
 		//m.rotate(0.7, 0.0, 0.0, 1.0);
 		obj->setTransform(m);
 		
-		EduptMaterial *mat = new EduptMaterial(sphrdef.diffuse, sphrdef.emittion, sphrdef.type);
+		SingleBSDFMaterial *mat = new SingleBSDFMaterial();
+		switch(sphrdef.type) {
+			case DIFFUSE:
+				mat->setBSDF(BSDFRef(new DiffuseBSDF()));
+				break;
+			case SPECULAR:
+				mat->setBSDF(BSDFRef(new SpecularBSDF()));
+				break;
+			case REFRACTION:
+				mat->setBSDF(BSDFRef(new RefractionBSDF()));
+				break;
+			case PAINT:
+				mat->setBSDF(BSDFRef(new PaintBSDF()));
+				break;
+			case BACKGROUND:
+				mat = nullptr;
+				break;
+		}
+		mat->setReflectanceColor(sphrdef.diffuse);
+		mat->setEmittanceColor(sphrdef.emittion);
 		obj->addMaterial(MaterialRef(mat));
 		
 		scene->addObject(SceneObjectRef(obj));

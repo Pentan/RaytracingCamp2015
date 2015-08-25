@@ -43,8 +43,8 @@ int BVHNode::recurseBuildTree(BVHNode &node, AABB *aabbArray, const int aabbnum,
         
         // detect divide axis
         Vector3 centroSize = centroAABB.getSize();
-        int chooseaxis = (centroSize.x_ > centroSize.y_)? 0 : 1;
-        if(centroSize.z_ > centroSize.v[chooseaxis]) {
+        int chooseaxis = (centroSize.x > centroSize.y)? 0 : 1;
+        if(centroSize.z > centroSize.v[chooseaxis]) {
             chooseaxis = 2;
         }
         

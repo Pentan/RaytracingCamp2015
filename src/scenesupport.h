@@ -25,9 +25,9 @@ public:
 	
 	// override methods
 	Color skyColor(const Ray &ray) const;
-	Color albedo(const SceneObject *obj, const Intersection &isect) const;
-	Color emission(const SceneObject *obj, const Intersection &isect) const;
-	void makeNextRays(const Ray &ray, const Intersection &isect, const int depth, Random *rnd, std::vector<Ray> *outvecs) const;
+	Color getReflectance(const SceneObject *obj, const Intersection &isect) const;
+	Color getEmittance(const SceneObject *obj, const Intersection &isect) const;
+	void makeNextRays(const Ray &ray, const SceneObject *obj, const Intersection &isect, const int depth, Random *rnd, std::vector<Ray> *outvecs) const;
 	
 	//
 	void setKd(Color kd);

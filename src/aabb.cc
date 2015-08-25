@@ -43,25 +43,25 @@ Vector3 AABB::getSize() const {
 }
 
 void AABB::expand(const Vector3 &p) {
-	if(p.x_ < min.x_) min.x_ = p.x_;
-	if(p.y_ < min.y_) min.y_ = p.y_;
-	if(p.z_ < min.z_) min.z_ = p.z_;
+	if(p.x < min.x) min.x = p.x;
+	if(p.y < min.y) min.y = p.y;
+	if(p.z < min.z) min.z = p.z;
 	
-	if(p.x_ > max.x_) max.x_ = p.x_;
-	if(p.y_ > max.y_) max.y_ = p.y_;
-	if(p.z_ > max.z_) max.z_ = p.z_;
+	if(p.x > max.x) max.x = p.x;
+	if(p.y > max.y) max.y = p.y;
+	if(p.z > max.z) max.z = p.z;
 	
 	updateCentroid();
 }
 
 void AABB::expand(const AABB &aabb) {
-	if(min.x_ > aabb.min.x_) min.x_ = aabb.min.x_;
-	if(min.y_ > aabb.min.y_) min.y_ = aabb.min.y_;
-	if(min.z_ > aabb.min.z_) min.z_ = aabb.min.z_;
+	if(min.x > aabb.min.x) min.x = aabb.min.x;
+	if(min.y > aabb.min.y) min.y = aabb.min.y;
+	if(min.z > aabb.min.z) min.z = aabb.min.z;
 	
-	if(max.x_ < aabb.max.x_) max.x_ = aabb.max.x_;
-	if(max.y_ < aabb.max.y_) max.y_ = aabb.max.y_;
-	if(max.z_ < aabb.max.z_) max.z_ = aabb.max.z_;
+	if(max.x < aabb.max.x) max.x = aabb.max.x;
+	if(max.y < aabb.max.y) max.y = aabb.max.y;
+	if(max.z < aabb.max.z) max.z = aabb.max.z;
 	
 	updateCentroid();
 }
@@ -71,8 +71,8 @@ void AABB::updateCentroid() {
 }
 
 bool AABB::isInside(const Vector3 &p) const {
-	return ((p.x_ > min.x_ && p.y_ > min.y_ && p.z_ > min.z_) &&
-			(p.x_ < max.x_ && p.y_ < max.y_ && p.z_ < max.z_) );
+	return ((p.x > min.x && p.y > min.y && p.z > min.z) &&
+			(p.x < max.x && p.y < max.y && p.z < max.z) );
 }
 
 bool AABB::isIntersect(const Ray &ray, R1hFPType *outmin, int *outaxis) const {
