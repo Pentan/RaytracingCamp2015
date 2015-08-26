@@ -205,7 +205,7 @@ inline bool Matrix4<FPType>::invert() {
             invrowptr[maxrow] = swapv;
         }
         // eliminate
-        float pvtval = mrowptr[i]->v[i];
+		FPType pvtval = mrowptr[i]->v[i];
         if(fabs(pvtval) < VEC_EPS) {
             return false;
         }

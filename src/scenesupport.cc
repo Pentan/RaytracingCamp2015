@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 
 #include "r1htypes.h"
 #include "scenesupport.h"
@@ -238,7 +238,7 @@ void SimpleObjLoader::endFile(std::string fullpath) {
 		printf("%zu objects loaded\n", objcount);
 		
 		// if normals are not contained
-		for(int i = 0; i < objcount; i++) {
+		for(size_t i = 0; i < objcount; i++) {
 			//SceneObject *obj = scene->getObject(i);
 			SceneObject *obj = tmpObjs[i].get();
 			Mesh *mesh = dynamic_cast<Mesh*>(obj->getGeometry());

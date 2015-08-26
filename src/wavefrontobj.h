@@ -1,4 +1,4 @@
-﻿#ifndef R1H_OBJLOADER_H
+#ifndef R1H_OBJLOADER_H
 #define R1H_OBJLOADER_H
 
 #include <string>
@@ -7,6 +7,7 @@
 namespace r1h {
 
 class WavefrontObj {
+protected:
     std::string basepath;
     std::string filepath;
     

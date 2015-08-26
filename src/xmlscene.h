@@ -49,8 +49,8 @@ private:
 		std::map<std::string, TextureRef> textures;
     } assets;
 	
-	class XmlParser;
-	XmlParser* parser;
+	class XMLParser;
+	XMLParser* parser;
 	
 	//bool resolveReference();
 };

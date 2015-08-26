@@ -1,4 +1,4 @@
-﻿
+
 #include <iostream>
 #include <algorithm>
 #include "mesh.h"
@@ -186,13 +186,13 @@ void Mesh::buildBVH() {
 	}
 	else {
 		AABB *faceAABBs = new AABB[facenum];
-		for (int i = 0; i < facenum; i++) {
+		for (size_t i = 0; i < facenum; i++) {
 			Face &fc = faces[i];
 			AABB &ab = faceAABBs[i];
 			ab.expand(vertices[fc.v0]);
 			ab.expand(vertices[fc.v1]);
 			ab.expand(vertices[fc.v2]);
-			ab.dataId = i;
+			ab.dataId = int(i);
 		}
 		bvhRoot = new BVHNode();
 		size_t maxdepth;

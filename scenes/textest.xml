@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<scene version="0.1">
+	<!-- config -->
+	<renderer
+		type="pathtrace"
+		width="320"
+		height="240"
+		subSamples="2"
+		samples="4"
+		minDepth="2"
+		maxDepth="4"
+		tileSize="32"
+		threads="0"
+		output="outedupt.bmp"/>
+	
+	<camera>
+		<transform>
+			<lookat 
+				position="0.0, 0.0, 4.0"
+				lookat	="0.0, 0.0, 0.0"
+				up		="0.0, 1.0, 0.0"/>
+		</transform>
+		<lens type="pinhole" focalLength="28.0" fNumber="0.0"/>
+		<sensor width="36.0" height="24.0" aspect="1.333"/>
+	</camera>
+	
+	<sky type="sphere">
+		<color type="rgb" value="0.18, 0.18, 0.18"/>
+	</sky>
+	
+	<library></library>
+	
+	<!-- cube -->
+	<object id="Plane">
+		<transform>
+			<translate value="0.0, 0.0, 0.0"/>
+		</transform>
+		<geometry type="mesh" src="models/texplane.obj"/>
+		<material type="singlebsdf">
+			<bsdf type="diffuse"/>
+			<reflectance color="0.0, 0.0, 0.0"/>
+			<emittance>
+				<texture type="image" map="uv" src="images/uvtest.png"/>
+			</emittance>
+		</material>
+	</object>
+	<!--
+	<object>
+		<transform>
+			<translate value="3.0, 0.0, 0.0"/>
+            <rotate axis="0.0, 1.0, 0.0" angle="1.0"/>
+		</transform>
+		<geometry type="mesh" src="models/cube.obj"/>
+		<material type="singlebsdf">
+			<bsdf type="diffuse"/>
+			<reflectance color="0.25, 0.25, 0.75"/>
+			<emittance color="0.0, 0.0, 0.0"/>
+		</material>
+	</object>
+    
+	<object>
+		<transform>
+			<translate value="-3.0, 0.0, 0.0"/>
+            <rotate axis="1.0, 0.0, 0.0" angle="-1.0"/>
+		</transform>
+		<geometry type="mesh" src="models/cube.obj"/>
+		<material type="singlebsdf">
+			<bsdf type="diffuse"/>
+			<reflectance>
+                <texture type="image" src="images/test.tga" map="sphere" />
+            </reflectance>
+			<emittance color="0.0, 0.0, 0.0"/>
+		</material>
+	</object>
+    -->
+	<!-- light source object -->
+	<object id="emissionSphere" emitter="true">
+		<geometry type="sphere" position="3.0, 3.0, 3.0" radius="0.5"/>
+		<material type="singlebsdf">
+			<bsdf type="diffuse"/>
+			<reflectance color="0.0, 0.0, 0.0"/>
+			<emittance color="10.0, 10.0, 10.0"/>
+		</material>
+	</object>
+</scene>

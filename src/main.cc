@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 #include <cstdio>
 #include <string>
 #include <thread>
@@ -68,15 +68,17 @@ int main(int argc, char *argv[]) {
 	
 	scene = new Scene();
 	
-	//+++++
+#if 1
 	{
 		XMLSceneLoader loader;
-		std::string xmlfile("scenes/edupt_cornelbox.xml");
+		//std::string xmlfile("scenes/edupt_cornelbox.xml");
+		//std::string xmlfile("scenes/mesh_cube.xml");
+		std::string xmlfile("scenes/textest.xml");
 		loader.load(xmlfile, scene, render);
-		return 0;
+		loaded = true;
+		//return 0;
 	}
-	//+++++
-	
+#else
 	if(argc > 1) {
 		loaded = scene->loadWavefrontObj(argv[1]);
 	} else {
@@ -90,7 +92,8 @@ int main(int argc, char *argv[]) {
 		EduptScene::load(scene, (double)renderConf.width / renderConf.height);
 		//EduptScene::load2(scene, (double)renderConf.width / renderConf.height);
 	}
-	
+#endif
+
     printf("scene loaded [%.4f sec]\n", gettimeofday_sec() - startTime);
 
 	if(loaded) {

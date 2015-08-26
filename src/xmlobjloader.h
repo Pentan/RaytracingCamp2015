@@ -1,9 +1,10 @@
 #ifndef R1H_XML_OBJLOADER_H
 #define R1H_XML_OBJLOADER_H
 
-
 #include <cstdio>
+#include <string>
 #include <vector>
+#include <map>
 #include "wavefrontobj.h"
 #include "scene.h"
 #include "sceneobject.h"
@@ -13,7 +14,7 @@ namespace r1h {
 
 class XMLSceneObjLoader: public WavefrontObj {
 public:
-	XMLSceneObjLoader(std::string filepath, Scene *sc);
+	XMLSceneObjLoader(std::string path, Scene *sc);
 	~XMLSceneObjLoader();
 	
 	// implement below
@@ -36,11 +37,15 @@ public:
 	
 	///
 	SceneObject* getSceneObject();
+	int getMaterialCount();
 	
 private:
 	Scene *scene;
 	SceneObjectRef scnobj;
 	Mesh* mesh;
+	
+	std::map<std::string, int> matIdMap;
+	int curMatID;
 };
 
 }

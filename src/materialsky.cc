@@ -1,4 +1,4 @@
-﻿
+
 #include "materialsky.h"
 
 using namespace r1h;
@@ -16,7 +16,7 @@ SkyMaterial::~SkyMaterial() {
 Color SkyMaterial::skyColor(const Ray &ray) const {
 	Color ret = color;
 	
-	if(!texture) {
+	if(texture.get() != nullptr) {
 		Vector3 coord;
 		coord.x = atan2(ray.direction.x, ray.direction.z);
 		coord.y = acos(ray.direction.y);

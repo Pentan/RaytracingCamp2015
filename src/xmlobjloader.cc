@@ -4,11 +4,14 @@
 
 using namespace r1h;
 
-XMLSceneObjLoader::XMLSceneObjLoader(std::string filepath, Scene *sc):
-	WavefrontObj(filepath), scene(sc)
+XMLSceneObjLoader::XMLSceneObjLoader(std::string path, Scene *sc):
+	WavefrontObj(path), scene(sc)
 {
+	filepath = path;
+	basepath = "";
+
 	scnobj = SceneObjectRef(new SceneObject());
-	scnobj->setName(filepath);
+	scnobj->setName(path);
 	mesh = new Mesh();
 	// for vt
 	mesh->newAttributeContainer();
@@ -18,6 +21,8 @@ XMLSceneObjLoader::XMLSceneObjLoader(std::string filepath, Scene *sc):
 	mesh->addAttribute(0, Vector3(0.0));
 	// set
 	scnobj->setGeometry(GeometryRef(mesh));
+	
+	curMatID = 0;
 }
 
 XMLSceneObjLoader::~XMLSceneObjLoader() {
@@ -53,7 +58,10 @@ void XMLSceneObjLoader::foundVector(const ParameterType pt, const double x, cons
 void XMLSceneObjLoader::foundString(const ParameterType pt, const std::string &str) {
 	switch(pt) {
 		case OBJ_usemtl:
-			// 1 material only
+			if(matIdMap.find(str) == matIdMap.end()) {
+				matIdMap[str] = int(matIdMap.size());
+			}
+			curMatID = matIdMap[str];
 			break;
 		case OBJ_o:
 		case OBJ_g:
@@ -118,18 +126,22 @@ void XMLSceneObjLoader::importMTL(std::string filename) {
 
 // endof .mtl or .obj
 void XMLSceneObjLoader::endFile(std::string fullpath) {
-	// don't add empty mesh.
 	if(mesh->getFaceCount() > 0) {
 		// if don't has normal, calc it.
 		if(mesh->getNormalCount() <= 1) {
 			mesh->calcSmoothNormals();
 		}
 		
-		scene->addObject(scnobj);
+		// This is geometry loader. don't add to scene
+		//scene->addObject(scnobj);
 	}
 }
 
 SceneObject* XMLSceneObjLoader::getSceneObject() {
 	return scnobj.get();
+}
+
+int XMLSceneObjLoader::getMaterialCount() {
+	return matIdMap.size();
 }
 

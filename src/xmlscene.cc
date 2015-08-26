@@ -18,10 +18,10 @@ using namespace r1h;
 // TinyXML backend xml parser
 #include <tinyxml/tinyxml2.h>
 
-class XMLSceneLoader::XmlParser {
+class XMLSceneLoader::XMLParser {
 public:
-	XmlParser();
-	~XmlParser();
+	XMLParser();
+	~XMLParser();
 	
 	bool load(std::string& filename, XMLSceneLoader *xmlloader);
 	
@@ -38,6 +38,7 @@ private:
 	TextureRef parseTextureElement(tinyxml2::XMLElement *elm);
 	MaterialRef parseMaterialElement(tinyxml2::XMLElement *elm);
 	GeometryRef parseGeometryElement(tinyxml2::XMLElement *elm);
+	BSDFRef parseBSDFElement(tinyxml2::XMLElement *elm);
 	
 	Vector3 parseVector3Element(tinyxml2::XMLElement *elm);
 	Color parseColorElement(tinyxml2::XMLElement *elm);
@@ -58,10 +59,10 @@ private:
 /////
 // implementation
 
-XMLSceneLoader::XmlParser::XmlParser() {}
-XMLSceneLoader::XmlParser::~XmlParser() {}
+XMLSceneLoader::XMLParser::XMLParser() {}
+XMLSceneLoader::XMLParser::~XMLParser() {}
 
-bool XMLSceneLoader::XmlParser::load(std::string& filename, XMLSceneLoader *xmlloader) {
+bool XMLSceneLoader::XMLParser::load(std::string& filename, XMLSceneLoader *xmlloader) {
 	tinyxml2::XMLError xmlerr;
 	tinyxml2::XMLDocument doc;
 	
@@ -119,7 +120,7 @@ bool XMLSceneLoader::XmlParser::load(std::string& filename, XMLSceneLoader *xmll
 	return ret;
 }
 
-bool XMLSceneLoader::XmlParser::parseRenderConfig(tinyxml2::XMLElement *elm) {
+bool XMLSceneLoader::XMLParser::parseRenderConfig(tinyxml2::XMLElement *elm) {
 	std::cout << "parseRenderConfig" << std::endl;
 	
 	Renderer *rndr = loader->getRederer();
@@ -141,7 +142,7 @@ bool XMLSceneLoader::XmlParser::parseRenderConfig(tinyxml2::XMLElement *elm) {
 	
 	return true;
 }
-bool XMLSceneLoader::XmlParser::parseAssetLibrary(tinyxml2::XMLElement *elm) {
+bool XMLSceneLoader::XMLParser::parseAssetLibrary(tinyxml2::XMLElement *elm) {
 	std::cout << "TODO: parseAssetLibrary" << std::endl;
 	
 	tinyxml2::XMLElement *tmpelm = elm->FirstChildElement();
@@ -185,7 +186,7 @@ bool XMLSceneLoader::XmlParser::parseAssetLibrary(tinyxml2::XMLElement *elm) {
 	
 	return true;
 }
-bool XMLSceneLoader::XmlParser::parseCamera(tinyxml2::XMLElement *elm) {
+bool XMLSceneLoader::XMLParser::parseCamera(tinyxml2::XMLElement *elm) {
 	std::cout << "parseCamera" << std::endl;
 	
 	Scene *scn = loader->getScene();
@@ -239,7 +240,7 @@ bool XMLSceneLoader::XmlParser::parseCamera(tinyxml2::XMLElement *elm) {
 	std::cout << "done" << std::endl;
 	return true;
 }
-bool XMLSceneLoader::XmlParser::parseSky(tinyxml2::XMLElement *elm) {
+bool XMLSceneLoader::XMLParser::parseSky(tinyxml2::XMLElement *elm) {
 	std::cout << "parseSky" << std::endl;
 	Scene *scn = loader->getScene();
 	SkyMaterialRef mat = SkyMaterialRef(new SkyMaterial());
@@ -273,7 +274,7 @@ bool XMLSceneLoader::XmlParser::parseSky(tinyxml2::XMLElement *elm) {
 	
 	return true;
 }
-bool XMLSceneLoader::XmlParser::parseObject(tinyxml2::XMLElement *elm) {
+bool XMLSceneLoader::XMLParser::parseObject(tinyxml2::XMLElement *elm) {
 	std::cout << "TODO: parseObject" << std::endl;
 	Scene *scn = loader->getScene();
 	SceneObject *scnobj = new SceneObject();
@@ -313,7 +314,7 @@ bool XMLSceneLoader::XmlParser::parseObject(tinyxml2::XMLElement *elm) {
 	return true;
 }
 
-TextureRef XMLSceneLoader::XmlParser::parseTextureElement(tinyxml2::XMLElement *elm) {
+TextureRef XMLSceneLoader::XMLParser::parseTextureElement(tinyxml2::XMLElement *elm) {
 	TextureRef ret;
 	std::string refid;
 	if(checkStringAttribute(elm, "ref", &refid)) {
@@ -328,13 +329,52 @@ TextureRef XMLSceneLoader::XmlParser::parseTextureElement(tinyxml2::XMLElement *
 		// TODO:
 		std::cout << "TODO parseTextureElement when not stub." << std::endl;
 		
-		ret = TextureRef(nullptr);
+		// type
+		std::string textype;
+		if(!checkStringAttribute(elm, "type", &textype)) {
+			std::cout << "No type defined texture\n" << std::endl;
+			return TextureRef(nullptr);
+		}
+
+		if (textype.compare("image") == 0) {
+			std::string srcfile;
+			if (checkStringAttribute(elm, "src", &srcfile)) {
+				ImageTexture *imgtex = new ImageTexture();
+				imgtex->load(loader->getBasePath() + srcfile);
+				
+				ret = TextureRef(imgtex);
+			}
+
+		} else if (textype.compare("noise") == 0) {
+			// TODO
+			ret = TextureRef(nullptr);
+		} else if (textype.compare("fractalnoise") == 0) {
+			// TODO
+			ret = TextureRef(nullptr);
+		} else if (textype.compare("voronoi") == 0) {
+			// TODO
+			ret = TextureRef(nullptr);
+		}
+		
+		if(ret.get() != nullptr) {
+			// map
+			std::string mapto;
+			if(checkStringAttribute(elm, "map", &mapto)) {
+				if(mapto.compare("uv") == 0) {
+					ret->setMapType(Texture::MapType::kUV);
+				} else if(mapto.compare("world") == 0) {
+					ret->setMapType(Texture::MapType::kWorld);
+				} else if(mapto.compare("local") == 0) {
+					ret->setMapType(Texture::MapType::kLocal);
+				}
+			}
+		}
 	}
 	//std::cout << "TODO parseTextureElement" << std::endl;
 	return ret;
 }
 
-MaterialRef XMLSceneLoader::XmlParser::parseMaterialElement(tinyxml2::XMLElement *elm) {
+MaterialRef XMLSceneLoader::XMLParser::parseMaterialElement(tinyxml2::XMLElement *elm) {
 	MaterialRef ret = nullptr;
 	std::string refid;
 	if(checkStringAttribute(elm, "ref", &refid)) {
@@ -359,7 +399,7 @@ MaterialRef XMLSceneLoader::XmlParser::parseMaterialElement(tinyxml2::XMLElement
 	return ret;
 }
 
-GeometryRef XMLSceneLoader::XmlParser::parseGeometryElement(tinyxml2::XMLElement *elm) {
+GeometryRef XMLSceneLoader::XMLParser::parseGeometryElement(tinyxml2::XMLElement *elm) {
 	GeometryRef ret;
 	std::string refid;
 	
@@ -383,13 +423,16 @@ GeometryRef XMLSceneLoader::XmlParser::parseGeometryElement(tinyxml2::XMLElement
 			std::cout << "parse mesh geometry" << std::endl;
 			
 			std::string objname;
-			assert(checkStringAttribute(elm, "src", &objname));
+			bool srcres = checkStringAttribute(elm, "src", &objname);
+			assert(srcres);
 			
 			XMLSceneObjLoader objloader(objname, loader->getScene());
 			objloader.setBasePath(loader->getBasePath());
 			objloader.load();
 			
 			ret = objloader.getSceneObject()->getGeometryRef();
+			/////
+			std::cout << "expects num of materials: " << objloader.getMaterialCount() << std::endl;
 			
 		} else if(geomtype.compare("sphere") == 0) {
 			std::cout << "parse sphere geometry" << std::endl;
@@ -422,26 +465,54 @@ GeometryRef XMLSceneLoader::XmlParser::parseGeometryElement(tinyxml2::XMLElement
 	return ret;
 }
 
-Vector3 XMLSceneLoader::XmlParser::parseVector3Element(tinyxml2::XMLElement *elm) {
+BSDFRef XMLSceneLoader::XMLParser::parseBSDFElement(tinyxml2::XMLElement *elm) {
+	BSDFRef ret(nullptr);
+	std::string type;
+	bool res = checkStringAttribute(elm, "type", &type);
+	assert(res);
+	
+	if(type.compare("diffuse") == 0) {
+		ret = BSDFRef(new DiffuseBSDF());
+		
+	} else if(type.compare("refraction") == 0) {
+		RefractionBSDF *tmpbsdf = new RefractionBSDF();
+		R1hFPType ior;
+		if(checkFloatAttribute(elm, "ior", &ior)) {
+			tmpbsdf->setIor(ior);
+		}
+		ret = BSDFRef(tmpbsdf);
+		
+	} else if(type.compare("specular") == 0) {
+		ret = BSDFRef(new SpecularBSDF());
+		
+	} else {
+		std::cerr << "illegal BSDF:" << type << std::endl;
+		assert(false);
+	}
+	
+	return ret;
+}
+
+Vector3 XMLSceneLoader::XMLParser::parseVector3Element(tinyxml2::XMLElement *elm) {
 	Vector3 ret;
 	//std::cout << "parseVector3Element" << std::endl;
 	checkVector3Attribute(elm, "value", &ret);
 	return ret;
 }
-Color XMLSceneLoader::XmlParser::parseColorElement(tinyxml2::XMLElement *elm) {
+Color XMLSceneLoader::XMLParser::parseColorElement(tinyxml2::XMLElement *elm) {
 	Color ret;
 	//std::cout << "TODO parseColorElement" << std::endl;
 	// TODO: RGB only
 	checkColorAttribute(elm, "value", &ret);
 	return ret;
 }
-Matrix4 XMLSceneLoader::XmlParser::parseMatrix4Element(tinyxml2::XMLElement *elm) {
+Matrix4 XMLSceneLoader::XMLParser::parseMatrix4Element(tinyxml2::XMLElement *elm) {
 	Matrix4 ret;
 	std::cout << "TODO parseMatrix4Element" << std::endl;
 	return ret;
 }
 
-Matrix4 XMLSceneLoader::XmlParser::parseTransformElement(tinyxml2::XMLElement *elm) {
+Matrix4 XMLSceneLoader::XMLParser::parseTransformElement(tinyxml2::XMLElement *elm) {
 	Matrix4 mat;
 	
 	tinyxml2::XMLElement *tmpelm = elm->FirstChildElement();
@@ -498,7 +569,7 @@ Matrix4 XMLSceneLoader::XmlParser::parseTransformElement(tinyxml2::XMLElement *e
 	return mat;
 }
 
-bool XMLSceneLoader::XmlParser::checkIntAttribute(tinyxml2::XMLElement *elm, const char *key, int *val) {
+bool XMLSceneLoader::XMLParser::checkIntAttribute(tinyxml2::XMLElement *elm, const char *key, int *val) {
 	tinyxml2::XMLError err;
 	int tmpval;
 	err = elm->QueryIntAttribute(key, &tmpval);
@@ -509,7 +580,7 @@ bool XMLSceneLoader::XmlParser::checkIntAttribute(tinyxml2::XMLElement *elm, con
 	*val = tmpval;
 	return true;
 }
-bool XMLSceneLoader::XmlParser::checkFloatAttribute(tinyxml2::XMLElement *elm, const char *key, R1hFPType *val) {
+bool XMLSceneLoader::XMLParser::checkFloatAttribute(tinyxml2::XMLElement *elm, const char *key, R1hFPType *val) {
 	tinyxml2::XMLError err;
 	double tmpval;
 	err = elm->QueryDoubleAttribute(key, &tmpval);
@@ -520,7 +591,7 @@ bool XMLSceneLoader::XmlParser::checkFloatAttribute(tinyxml2::XMLElement *elm, c
 	*val = R1hFPType(tmpval);
 	return true;
 }
-bool XMLSceneLoader::XmlParser::checkStringAttribute(tinyxml2::XMLElement *elm, const char *key, std::string *val) {
+bool XMLSceneLoader::XMLParser::checkStringAttribute(tinyxml2::XMLElement *elm, const char *key, std::string *val) {
 	const char *attrval = elm->Attribute(key);
 	if(!attrval) {
 		//std::cout << "illegal attribute for " << key << std::endl;
@@ -529,7 +600,7 @@ bool XMLSceneLoader::XmlParser::checkStringAttribute(tinyxml2::XMLElement *elm, 
 	*val = attrval;
 	return true;
 }
-bool XMLSceneLoader::XmlParser::checkVector3Attribute(tinyxml2::XMLElement *elm, const char *key, Vector3 *val) {
+bool XMLSceneLoader::XMLParser::checkVector3Attribute(tinyxml2::XMLElement *elm, const char *key, Vector3 *val) {
 	std::string tmpstr;
 	if(!checkStringAttribute(elm, key, &tmpstr)) {
 		// bad value
@@ -546,7 +617,7 @@ bool XMLSceneLoader::XmlParser::checkVector3Attribute(tinyxml2::XMLElement *elm,
 	*val = v;
 	return true;
 }
-bool XMLSceneLoader::XmlParser::checkColorAttribute(tinyxml2::XMLElement *elm, const char *key, Color *val) {
+bool XMLSceneLoader::XMLParser::checkColorAttribute(tinyxml2::XMLElement *elm, const char *key, Color *val) {
 	std::string tmpstr;
 	if(!checkStringAttribute(elm, key, &tmpstr)) {
 		// bad value
@@ -565,7 +636,7 @@ bool XMLSceneLoader::XmlParser::checkColorAttribute(tinyxml2::XMLElement *elm, c
 }
 
 /////
-MaterialRef XMLSceneLoader::XmlParser::parseSingleBSDFMaterial(tinyxml2::XMLElement *elm) {
+MaterialRef XMLSceneLoader::XMLParser::parseSingleBSDFMaterial(tinyxml2::XMLElement *elm) {
 	std::cout << "parseSingleBSDFMaterial" << std::endl;
 	SingleBSDFMaterial *mat = new SingleBSDFMaterial();
 	
@@ -574,27 +645,10 @@ MaterialRef XMLSceneLoader::XmlParser::parseSingleBSDFMaterial(tinyxml2::XMLElem
 		const char *elmname = tmpelm->Name();
 		
 		if(strcmp(elmname, "bsdf") == 0) {
-			std::string bsdftype;
-			assert(checkStringAttribute(tmpelm, "type", &bsdftype));
-			if(bsdftype.compare("diffuse") == 0) {
-				mat->setBSDF(BSDFRef(new DiffuseBSDF()));
-				
-			} else if(bsdftype.compare("refraction") == 0) {
-				RefractionBSDF *tmpbsdf = new RefractionBSDF();
-				R1hFPType ior;
-				if(checkFloatAttribute(tmpelm, "ior", &ior)) {
-					tmpbsdf->setIor(ior);
-				}
-				mat->setBSDF(BSDFRef(tmpbsdf));
-				
-			} else if(bsdftype.compare("specular") == 0) {
-				mat->setBSDF(BSDFRef(new SpecularBSDF()));
-				
-			} else {
-				std::cerr << "illegal BSDF:" << bsdftype << std::endl;
-				assert(false);
+			BSDFRef bsdf = parseBSDFElement(tmpelm);
+			if(bsdf.get() != nullptr) {
+				mat->setBSDF(bsdf);
 			}
-			
 		} else if(strcmp(elmname, "reflectance") == 0) {
 			Color tmpcol;
 			if(checkColorAttribute(tmpelm, "color", &tmpcol)) {
@@ -627,7 +681,7 @@ MaterialRef XMLSceneLoader::XmlParser::parseSingleBSDFMaterial(tinyxml2::XMLElem
 
 //////////
 XMLSceneLoader::XMLSceneLoader():
-	parser(new XmlParser())
+	parser(new XMLParser())
 {}
 
 XMLSceneLoader::~XMLSceneLoader() {
