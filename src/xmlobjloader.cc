@@ -104,17 +104,19 @@ void XMLSceneObjLoader::foundFace(const ParameterType pt, const std::vector<Face
 	face.setV(fids[0].v, fids[1].v, fids[2].v);
 	face.setN(fids[0].vn, fids[1].vn, fids[2].vn);
 	face.addAttr(0, fids[0].vt, fids[1].vt, fids[2].vt);
-	face.matid = 0;
+	face.matid = curMatID;
 	mesh->addFace(face);
 	
 	//std::cout << "f " << fids[0].v << "," << fids[1].v << "," << fids[2].v << std::endl;
 	
 	if(fids.size() > 3) {
 		// quad
+		face.attrs.clear();
+
 		face.setV(fids[2].v, fids[3].v, fids[0].v);
 		face.setN(fids[2].vn, fids[3].vn, fids[0].vn);
 		face.addAttr(0, fids[2].vt, fids[3].vt, fids[0].vt);
-		face.matid = 0;
+		face.matid = curMatID;
 		mesh->addFace(face);
 	}
 }
@@ -141,7 +143,7 @@ SceneObject* XMLSceneObjLoader::getSceneObject() {
 	return scnobj.get();
 }
 
-int XMLSceneObjLoader::getMaterialCount() {
+size_t XMLSceneObjLoader::getMaterialCount() {
 	return matIdMap.size();
 }
 

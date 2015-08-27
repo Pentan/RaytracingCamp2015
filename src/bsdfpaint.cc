@@ -1,4 +1,4 @@
-﻿
+
 #include "bsdfpaint.h"
 
 using namespace r1h;
@@ -9,6 +9,10 @@ PaintBSDF::PaintBSDF(const R1hFPType iior): ior(iior)
 
 PaintBSDF::~PaintBSDF()
 {
+}
+
+void PaintBSDF::setIor(R1hFPType nior) {
+	ior = nior;
 }
 
 void PaintBSDF::makeNextRays(const Ray &ray, const Intersection &hp, const int depth, Random *rnd, std::vector<Ray> *outvecs) {

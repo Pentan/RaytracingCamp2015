@@ -25,7 +25,14 @@
 	</camera>
 	
 	<sky type="sphere">
-		<color type="rgb" value="0.18, 0.18, 0.18"/>
+		<!-- <color type="rgb" value="0.18, 0.18, 0.18"/> -->
+		<color type="rgb" value="1.0, 1.0, 1.0"/>
+		<texture type="image" src="images/glacier.hdr" power="1.0"/>
+		<!--
+		<transform>
+			<rotate axis="0.0, 0.0, 1.0" angle="1.5"/>
+		</transform>
+		-->
 	</sky>
 	
 	<library></library>
@@ -38,10 +45,15 @@
 		<geometry type="mesh" src="models/texplane.obj"/>
 		<material type="singlebsdf">
 			<bsdf type="diffuse"/>
-			<reflectance color="0.0, 0.0, 0.0"/>
+			<reflectance>
+				<texture type="image" map="uv" src="images/uvtest.png"/>
+			</reflectance>
+			<emittance color="0.0, 0.0, 0.0"/>
+			<!--
 			<emittance>
 				<texture type="image" map="uv" src="images/uvtest.png"/>
 			</emittance>
+			-->
 		</material>
 	</object>
 	<!--
@@ -74,6 +86,7 @@
 	</object>
     -->
 	<!-- light source object -->
+	<!--
 	<object id="emissionSphere" emitter="true">
 		<geometry type="sphere" position="3.0, 3.0, 3.0" radius="0.5"/>
 		<material type="singlebsdf">
@@ -82,4 +95,5 @@
 			<emittance color="10.0, 10.0, 10.0"/>
 		</material>
 	</object>
+	-->
 </scene>

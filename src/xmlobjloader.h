@@ -37,7 +37,7 @@ public:
 	
 	///
 	SceneObject* getSceneObject();
-	int getMaterialCount();
+	size_t getMaterialCount();
 	
 private:
 	Scene *scene;

@@ -17,9 +17,12 @@ Color SkyMaterial::skyColor(const Ray &ray) const {
 	Color ret = color;
 	
 	if(texture.get() != nullptr) {
+		Vector3 dirv = Matrix4::mulV3(transform, ray.direction);
+		dirv.normalize();
+
 		Vector3 coord;
-		coord.x = atan2(ray.direction.x, ray.direction.z);
-		coord.y = acos(ray.direction.y);
+		coord.x = atan2(dirv.x, -dirv.z) / (kPI * 2.0) + 0.5;
+		coord.y = acos(dirv.y) / kPI;
 		coord.z = 0.0;
 		ret = Color::mul(ret, texture->sample(coord));
 	}

@@ -30,7 +30,7 @@ static double gettimeofday_sec() {
 #endif
 
 ///
-#define kProgressOutIntervalSec	60.0
+#define kProgressOutIntervalSec	30.0
 
 ///
 int main(int argc, char *argv[]) {
@@ -43,8 +43,9 @@ int main(int argc, char *argv[]) {
 
     // renderer setup
     Renderer *render = new Renderer();
-    Renderer::Config renderConf = render->getConfig();
+	Renderer::Config renderConf = render->getConfig();
 	
+	/*
     //renderConf.width = 1280 / 4;
     //renderConf.height = 720 / 4;
 	renderConf.width = 640 / 4;
@@ -60,35 +61,34 @@ int main(int argc, char *argv[]) {
     render->setConfig(renderConf);
 	
     printf("renderer configured [%.4f sec]\n", gettimeofday_sec() - startTime);
+	 */
 
     // scene setup
-    Scene *scene;
-	
+    Scene *scene = new Scene();
 	bool loaded = false;
-	
-	scene = new Scene();
 	
 #if 1
 	{
 		XMLSceneLoader loader;
 		//std::string xmlfile("scenes/edupt_cornelbox.xml");
 		//std::string xmlfile("scenes/mesh_cube.xml");
-		std::string xmlfile("scenes/textest.xml");
+		//std::string xmlfile("scenes/textest.xml");
+		//std::string xmlfile("scenes/bsdftest.xml");
+		std::string xmlfile("scenes/mesh_ref.xml");
+		
 		loader.load(xmlfile, scene, render);
 		loaded = true;
 		//return 0;
 	}
 #else
 	if(argc > 1) {
-		loaded = scene->loadWavefrontObj(argv[1]);
+		loaded = loader.load(argv[1], scene, render);
+		
 	} else {
 		printf("usage:%s [file.obj]\n", argv[0]);
 		printf("no obj set. setup default scene.\n");
 		loaded = true;
 		
-		//loaded = scene->loadWavefrontObj("models/manyobjs.obj");
-		
-		//+++++ edupt cornel box scene +++++
 		EduptScene::load(scene, (double)renderConf.width / renderConf.height);
 		//EduptScene::load2(scene, (double)renderConf.width / renderConf.height);
 	}
@@ -120,11 +120,8 @@ int main(int argc, char *argv[]) {
 			if(curtime - prevouttime > kProgressOutIntervalSec) {
 				// progress output
 				char buf[16];
-#ifdef WIN32
-				sprintf_s(buf, "%03d.bmp", outcount);
-#else
 				sprintf(buf, "%03d.bmp", outcount);
-#endif
+
 				mapper->exportBMP(render->getFrameBuffer(), buf);
                 printf("progress image %s saved\n", buf);
 				outcount++;
@@ -144,7 +141,7 @@ int main(int argc, char *argv[]) {
 		printf("render finished (%.4f sec) [%.4f sec]\n", gettimeofday_sec() - renderStart, gettimeofday_sec() - startTime);
 		
 		// final image
-        const char *finalname = "final.bmp";
+		const char *finalname = renderConf.outputFile.c_str();//"final.bmp";
 		mapper->exportBMP(render->getFrameBuffer(), finalname);
         printf("%s saved\n", finalname);
 

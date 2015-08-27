@@ -143,18 +143,25 @@ bool XMLSceneLoader::XMLParser::parseRenderConfig(tinyxml2::XMLElement *elm) {
 	return true;
 }
 bool XMLSceneLoader::XMLParser::parseAssetLibrary(tinyxml2::XMLElement *elm) {
-	std::cout << "TODO: parseAssetLibrary" << std::endl;
-	
+	std::cout << "parseAssetLibrary" << std::endl;
 	tinyxml2::XMLElement *tmpelm = elm->FirstChildElement();
 	while(tmpelm) {
 		const char *elmname = tmpelm->Name();
+		std::string assetid;
+		if(!checkStringAttribute(tmpelm, "id", &assetid)) {
+			std::cerr << "asset not has id" << std::endl;
+			continue;
+		}
 		
 		if(strcmp(elmname, "geometry") == 0) {
 			GeometryRef geom = parseGeometryElement(tmpelm);
 			if(geom.get() != nullptr) {
-				int res = loader->registerAsset(geom->getAssetId(), geom);
+				geom->setAssetId(assetid);
+				int res = loader->registerAsset(assetid, geom);
 				if(res != kRegistered) {
-					std::cout << "Geometry " << geom->getAssetId() << " register failed:" << res << std::endl;
+					std::cout << "Geometry " << assetid << " register failed:" << res << std::endl;
+				} else {
+					std::cout << "Geometry " << assetid << " registered" << std::endl;
 				}
 			} else {
 			}
@@ -162,18 +169,24 @@ bool XMLSceneLoader::XMLParser::parseAssetLibrary(tinyxml2::XMLElement *elm) {
 		} else if(strcmp(elmname, "texture") == 0) {
 			TextureRef tex = parseTextureElement(tmpelm);
 			if(tex.get() != nullptr) {
-				int res = loader->registerAsset(tex->getAssetId(), tex);
+				tex->setAssetId(assetid);
+				int res = loader->registerAsset(assetid, tex);
 				if(res != kRegistered) {
-					std::cout << "Texture " << tex->getAssetId() << " register failed:" << res << std::endl;
+					std::cout << "Texture " << assetid << " register failed:" << res << std::endl;
+				} else {
+					std::cout << "Texture " << assetid << " registered" << std::endl;
 				}
 			}
 			
 		} else if(strcmp(elmname, "material") == 0) {
 			MaterialRef mat = parseMaterialElement(tmpelm);
 			if(mat.get() != nullptr) {
-				int res = loader->registerAsset(mat->getAssetId(), mat);
+				mat->setAssetId(assetid);
+				int res = loader->registerAsset(assetid, mat);
 				if(res != kRegistered) {
-					std::cout << "Material " << mat->getAssetId() << " register failed:" << res << std::endl;
+					std::cout << "Material " << assetid << " register failed:" << res << std::endl;
+				} else {
+					std::cout << "Material " << assetid << " registered" << std::endl;
 				}
 			}
 			
@@ -259,6 +272,7 @@ bool XMLSceneLoader::XMLParser::parseSky(tinyxml2::XMLElement *elm) {
 			
 		} else if(strcmp(elmname, "transform") == 0) {
 			Matrix4 trans = parseTransformElement(tmpelm);
+			trans.invert(); 
 			mat->setTransform(trans);
 			
 		} else {
@@ -275,7 +289,7 @@ bool XMLSceneLoader::XMLParser::parseSky(tinyxml2::XMLElement *elm) {
 	return true;
 }
 bool XMLSceneLoader::XMLParser::parseObject(tinyxml2::XMLElement *elm) {
-	std::cout << "TODO: parseObject" << std::endl;
+	std::cout << "parseObject" << std::endl;
 	Scene *scn = loader->getScene();
 	SceneObject *scnobj = new SceneObject();
 	
@@ -327,7 +341,7 @@ TextureRef XMLSceneLoader::XMLParser::parseTextureElement(tinyxml2::XMLElement *
 	} else {
 		// others
 		// TODO:
-		std::cout << "TODO parseTextureElement when not stub." << std::endl;
+		//std::cout << "TODO parseTextureElement when not stub." << std::endl;
 		
 		// type
 		std::string textype;
@@ -338,9 +352,27 @@ TextureRef XMLSceneLoader::XMLParser::parseTextureElement(tinyxml2::XMLElement *
 
 		if (textype.compare("image") == 0) {
 			std::string srcfile;
+			R1hFPType gamma = 2.2;
+			R1hFPType power = 1.0;
+			std::string ipostr;
+			int ipo = ImageTexture::Interpolate::kNearest;
+
+			// option attrs
+			checkFloatAttribute(elm, "gamma", &gamma);
+			checkFloatAttribute(elm, "power", &power);
+			if(checkStringAttribute(elm, "interpolate", &ipostr)) {
+				if(ipostr.compare("nearest") == 0) {
+					ipo = ImageTexture::Interpolate::kNearest;
+				} else if(ipostr.compare("linear") == 0) {
+					ipo = ImageTexture::Interpolate::kLinear;
+				}
+			}
+
 			if (checkStringAttribute(elm, "src", &srcfile)) {
 				ImageTexture *imgtex = new ImageTexture();
-				imgtex->load(loader->getBasePath() + srcfile);
+
+				std::string srcpath = loader->getBasePath() + srcfile;
+				imgtex->load(srcpath, ipo, gamma, power);
 				
 				ret = TextureRef(imgtex);
 			}
@@ -348,12 +380,15 @@ TextureRef XMLSceneLoader::XMLParser::parseTextureElement(tinyxml2::XMLElement *
 		} else if (textype.compare("noise") == 0) {
 			// TODO
 			ret = TextureRef(nullptr);
+			
 		} else if (textype.compare("fractalnoise") == 0) {
 			// TODO
 			ret = TextureRef(nullptr);
+			
 		} else if (textype.compare("voronoi") == 0) {
 			// TODO
 			ret = TextureRef(nullptr);
+			
 		}
 		
 		if(ret.get() != nullptr) {
@@ -485,6 +520,17 @@ BSDFRef XMLSceneLoader::XMLParser::parseBSDFElement(tinyxml2::XMLElement *elm) {
 	} else if(type.compare("specular") == 0) {
 		ret = BSDFRef(new SpecularBSDF());
 		
+	} else if(type.compare("paint") == 0) {
+		PaintBSDF *tmpbsdf = new PaintBSDF();
+		R1hFPType ior;
+		if(checkFloatAttribute(elm, "ior", &ior)) {
+			tmpbsdf->setIor(ior);
+		}
+		ret = BSDFRef(tmpbsdf);
+
+	} else if(type.compare("translucent") == 0) {
+		ret = BSDFRef(new TranslucentBSDF());
+
 	} else {
 		std::cerr << "illegal BSDF:" << type << std::endl;
 		assert(false);
@@ -507,8 +553,19 @@ Color XMLSceneLoader::XMLParser::parseColorElement(tinyxml2::XMLElement *elm) {
 	return ret;
 }
 Matrix4 XMLSceneLoader::XMLParser::parseMatrix4Element(tinyxml2::XMLElement *elm) {
+	//std::cout << "TODO parseMatrix4Element" << std::endl;
 	Matrix4 ret;
-	std::cout << "TODO parseMatrix4Element" << std::endl;
+	const char *tmpstr = elm->GetText();
+	char c;
+	std::istringstream iss(tmpstr);
+	iss >> ret.m00 >> c >> ret.m10 >> c >> ret.m20 >> c >> ret.m30 >> c;
+	iss >> ret.m01 >> c >> ret.m11 >> c >> ret.m21 >> c >> ret.m31 >> c;
+	iss >> ret.m02 >> c >> ret.m12 >> c >> ret.m22 >> c >> ret.m32 >> c;
+	iss >> ret.m03 >> c >> ret.m13 >> c >> ret.m23 >> c >> ret.m33;
+	if(iss.fail()) {
+		//std::cout << "illegal Matrix format for " << key << ":" << tmpstr << std::endl;
+		return Matrix4();
+	}
 	return ret;
 }
 
@@ -559,6 +616,10 @@ Matrix4 XMLSceneLoader::XMLParser::parseTransformElement(tinyxml2::XMLElement *e
 				Matrix4 lookmat = Matrix4::makeLookAt(pos.x, pos.y, pos.z, lookat.x, lookat.y, lookat.z, up.x, up.y, up.z);
 				mat = mat * lookmat;
 			}
+		} else if(strcmp(elmname, "matrix") == 0) {
+			Matrix4 tmpmat = parseMatrix4Element(tmpelm);
+			mat = mat * tmpmat;
+			
 		} else {
 			std::cout << "unknown transform element: <" << elmname << ">" << std::endl;
 		}
