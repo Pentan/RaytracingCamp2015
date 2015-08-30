@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<scene version="0.1">
+	<!-- config -->
+	<renderer
+		type="pathtrace"
+		width="256"
+		height="256"
+		subSamples="2"
+		samples="8"
+		minDepth="2"
+		maxDepth="4"
+		tileSize="32"
+		threads="0"
+		output="bsdftest.bmp"/>
+	
+	<camera>
+		<transform>
+			<lookat 
+				position="0.0, 0.0, 5.0"
+				lookat	="0.0, 0.0, 0.0"
+				up		="0.0, 1.0, 0.0"/>
+		</transform>
+		<lens type="pinhole" focalLength="28.0" fNumber="0.0"/>
+		<sensor width="24.0" height="24.0" aspect="1.0"/>
+	</camera>
+	
+	<sky type="sphere">
+		<!-- <color type="rgb" value="0.18, 0.18, 0.18"/> -->
+		<!-- <color type="rgb" value="1.0, 1.0, 1.0"/> -->
+		<!-- <texture type="image" src="images/glacier.hdr" power="1.0"/> -->
+		<texture type="image" src="images/uffizi-large.hdr" power="1.0"/>
+		<!-- <texture type="image" src="images/grace-new.hdr" power="1.0"/> -->
+		<!-- <texture type="image" src="images/pisa.hdr" power="1.0"/> -->
+		<!-- <texture type="image" src="images/doge2.hdr" power="1.0"/> -->
+		<!-- interpolate="linear" -->
+	</sky>
+	
+	<library></library>
+	<object id="Sphere">
+		<geometry type="sphere" position="0.0, 0.0, 0.0" radius="1.0"/>
+		<material type="singlebsdf">
+			<bsdf type="diffuse"/>
+			<reflectance color="0.18, 0.18, 0.18"/>
+			<emittance color="0.0, 0.0, 0.0"/>
+		</material>
+	</object>
+	
+	<!-- light source object -->
+	<!--
+	<object id="emissionSphere" emitter="true">
+		<geometry type="sphere" position="3.0, 3.0, 3.0" radius="0.5"/>
+		<material type="singlebsdf">
+			<bsdf type="diffuse"/>
+			<reflectance color="0.0, 0.0, 0.0"/>
+			<emittance color="10.0, 10.0, 10.0"/>
+		</material>
+	</object>
+	-->
+</scene>

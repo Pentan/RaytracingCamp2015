@@ -214,12 +214,15 @@ bool XMLSceneLoader::XMLParser::parseCamera(tinyxml2::XMLElement *elm) {
 			cam->setTransform(mat);
 			
 		} else if(strcmp(elmname, "lens") == 0) {
-			R1hFPType fl, fn;
+			R1hFPType fl, fn, fd;
 			if(checkFloatAttribute(tmpelm, "focalLength", &fl)) {
 				cam->setFocalLength(fl);
 			}
 			if(checkFloatAttribute(tmpelm, "fNumber", &fn)) {
 				cam->setFNumber(fn);
+			}
+			if(checkFloatAttribute(tmpelm, "focusDistance", &fd)) {
+				cam->setFocusDistance(fd);
 			}
 			
 		} else if(strcmp(elmname, "sensor") == 0) {
@@ -289,7 +292,7 @@ bool XMLSceneLoader::XMLParser::parseSky(tinyxml2::XMLElement *elm) {
 	return true;
 }
 bool XMLSceneLoader::XMLParser::parseObject(tinyxml2::XMLElement *elm) {
-	std::cout << "parseObject" << std::endl;
+	//std::cout << "parseObject" << std::endl;
 	Scene *scn = loader->getScene();
 	SceneObject *scnobj = new SceneObject();
 	
@@ -298,7 +301,7 @@ bool XMLSceneLoader::XMLParser::parseObject(tinyxml2::XMLElement *elm) {
 		const char *elmname = tmpelm->Name();
 		
 		if(strcmp(elmname, "transform") == 0) {
-			std::cout << " transform found" << std::endl;
+			//std::cout << " transform found" << std::endl;
 			Matrix4 mat = parseTransformElement(tmpelm);
 			scnobj->setTransform(mat);
 			
@@ -354,12 +357,15 @@ TextureRef XMLSceneLoader::XMLParser::parseTextureElement(tinyxml2::XMLElement *
 			std::string srcfile;
 			R1hFPType gamma = 2.2;
 			R1hFPType power = 1.0;
+			int flip = 0;
 			std::string ipostr;
 			int ipo = ImageTexture::Interpolate::kNearest;
 
 			// option attrs
 			checkFloatAttribute(elm, "gamma", &gamma);
 			checkFloatAttribute(elm, "power", &power);
+			checkIntAttribute(elm, "flip", &flip);
+
 			if(checkStringAttribute(elm, "interpolate", &ipostr)) {
 				if(ipostr.compare("nearest") == 0) {
 					ipo = ImageTexture::Interpolate::kNearest;
@@ -372,7 +378,7 @@ TextureRef XMLSceneLoader::XMLParser::parseTextureElement(tinyxml2::XMLElement *
 				ImageTexture *imgtex = new ImageTexture();
 
 				std::string srcpath = loader->getBasePath() + srcfile;
-				imgtex->load(srcpath, ipo, gamma, power);
+				imgtex->load(srcpath, ipo, flip, gamma, power);
 				
 				ret = TextureRef(imgtex);
 			}
@@ -392,7 +398,7 @@ TextureRef XMLSceneLoader::XMLParser::parseTextureElement(tinyxml2::XMLElement *
 		}
 		
 		if(ret.get() != nullptr) {
-			// map
+			// map type
 			std::string mapto;
 			if(checkStringAttribute(elm, "map", &mapto)) {
 				if(mapto.compare("uv") == 0) {
@@ -765,6 +771,9 @@ bool XMLSceneLoader::load(std::string&  xmlpath, Scene *scn, Renderer *rndr)
 		ret = resolveReference();
 	}
 	*/
+
+	std::cout << "objects :" << scn->getObjectsCount() << std::endl;
+
 	return ret;
 }
 

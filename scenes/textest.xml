@@ -46,7 +46,7 @@
 		<material type="singlebsdf">
 			<bsdf type="diffuse"/>
 			<reflectance>
-				<texture type="image" map="uv" src="images/uvtest.png"/>
+				<texture type="image" map="uv" src="images/uvtest.png" flip="1"/>
 			</reflectance>
 			<emittance color="0.0, 0.0, 0.0"/>
 			<!--

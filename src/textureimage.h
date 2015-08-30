@@ -16,7 +16,7 @@ public:
 	ImageTexture();
 	~ImageTexture();
 
-	bool load(const std::string& path, int ipo=kNearest, R1hFPType gamma=2.2, R1hFPType power=1.0);
+	bool load(const std::string& path, int ipo=kNearest, int flip=0, R1hFPType gamma=2.2, R1hFPType power=1.0);
 
 	virtual Color sample(const Vector3 &p) const;
 	

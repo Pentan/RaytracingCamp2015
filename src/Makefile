@@ -19,6 +19,7 @@ CXXFLAGS = -std=c++11 -stdlib=libc++ -Wall $(EXTRAFLAGS) $(INCLUDES)
 LDFLAGS = -lc++ $(EXTRAFLAGS)
 
 OBJS = \
+    main.o \
     aabb.o \
     aabbgeometry.o \
     abstracttonemapper.o \
@@ -33,38 +34,33 @@ OBJS = \
     eduptscene.o \
     framebuffer.o \
     intersection.o \
+    materialsinglebsdf.o \
     materialsky.o \
     mesh.o \
     renderer.o \
     scene.o \
     scenesupport.o \
-    scene2013.o \
-    scene2014.o \
     sceneobject.o \
     sphere.o \
-    texture.o \
+    texturebase.o \
+    textureimage.o \
+    texturenoise.o \
     tonemapper.o \
-    wavefrontobj.o
+    wavefrontobj.o \
+    xmlscene.o \
+    xmlobjloader.o
 
 EXT_OBJS = \
-    $(EXT_DIR)/tinyexr/tinyexr.o \
-    $(EXT_DIR)/tinyxml/tinyxml.o
+    $(EXT_DIR)/tinyxml/tinyxml2.o
 
-TESTOBJ = main.o
-MAINOBJ = main.o
+#    $(EXT_DIR)/tinyexr/tinyexr.o \
 
-MAINEXE = RaRiT
-
-MAINTARGET = rarity
-TESTTARGET = r15m
+MAINEXE = twi
+MAINTARGET = twi
 
 # main
-$(MAINTARGET) : $(MAINOBJ) $(OBJS) $(EXT_OBJS)
-	$(CC) -o "$(MAINEXE)" $(MAINOBJ) $(OBJS) $(LDFLAGS)
-
-# test
-$(TESTTARGET) : $(TESTOBJ) $(OBJS) $(EXT_OBJS)
-	$(CC) -o "$(TESTTARGET)" $(TESTOBJ) $(OBJS) $(LDFLAGS)
+$(MAINTARGET) : $(OBJS) $(EXT_OBJS)
+	$(CC) -o "$(MAINEXE)" $(OBJS) $(EXT_OBJS) $(LDFLAGS)
 
 clean :
-	rm -f $(OBJS) $(TESTOBJ) $(MAINOBJ) "$(MAINEXE)" "$(TESTTARGET)"
+	rm -f $(OBJS) $(EXT_OBJS) "$(MAINEXE)"

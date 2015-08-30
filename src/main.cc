@@ -35,7 +35,7 @@ static double gettimeofday_sec() {
 ///
 int main(int argc, char *argv[]) {
 
-	std::cout << "RaRiT" << std::endl;
+	std::cout << "twi" << std::endl;
 
     using namespace r1h;
 
@@ -43,9 +43,10 @@ int main(int argc, char *argv[]) {
 
     // renderer setup
     Renderer *render = new Renderer();
+
+	/*
 	Renderer::Config renderConf = render->getConfig();
 	
-	/*
     //renderConf.width = 1280 / 4;
     //renderConf.height = 720 / 4;
 	renderConf.width = 640 / 4;
@@ -74,8 +75,10 @@ int main(int argc, char *argv[]) {
 		//std::string xmlfile("scenes/mesh_cube.xml");
 		//std::string xmlfile("scenes/textest.xml");
 		//std::string xmlfile("scenes/bsdftest.xml");
-		std::string xmlfile("scenes/mesh_ref.xml");
-		
+		//std::string xmlfile("scenes/mesh_ref.xml");
+		//std::string xmlfile("scenes/mesh_cat.xml");
+		std::string xmlfile("scenes/scene.xml");
+
 		loader.load(xmlfile, scene, render);
 		loaded = true;
 		//return 0;
@@ -141,6 +144,7 @@ int main(int argc, char *argv[]) {
 		printf("render finished (%.4f sec) [%.4f sec]\n", gettimeofday_sec() - renderStart, gettimeofday_sec() - startTime);
 		
 		// final image
+		Renderer::Config renderConf = render->getConfig();
 		const char *finalname = renderConf.outputFile.c_str();//"final.bmp";
 		mapper->exportBMP(render->getFrameBuffer(), finalname);
         printf("%s saved\n", finalname);

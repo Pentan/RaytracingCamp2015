@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<scene version="0.1">
+	<!-- config -->
+	<renderer
+		type="pathtrace"
+		width="320"
+		height="240"
+		subSamples="2"
+		samples="32"
+		minDepth="2"
+		maxDepth="8"
+		tileSize="32"
+		threads="0"
+		output="outedupt.bmp"/>
+	
+	<camera>
+		<transform>
+			<lookat 
+				position="0.0, 0.3, 1.0"
+				lookat	="0.0, 0.3, 0.0"
+				up		="0.0, 1.0, 0.0"/>
+		</transform>
+		<lens type="pinhole" focalLength="28.0" fNumber="0.0"/>
+		<sensor width="36.0" height="24.0" aspect="1.333"/>
+	</camera>
+	
+	<sky type="sphere">
+		<!-- <color type="rgb" value="0.18, 0.18, 0.18"/> -->
+		<texture type="image" src="images/uffizi-large.hdr" power="1.0"/>
+	</sky>
+	
+	<library>
+		<geometry id="MeshCube" type="mesh" src="models/cat.obj"/>
+		<!--
+		<material id="RedDiffuse" type="singlebsdf">
+			<bsdf type="diffuse"/>
+			<reflectance color="0.0, 0.0, 0.0"/>
+			<emittance>
+				<texture type="image" src="images/Body1.png" map="uv" flip="1"/>
+			</emittance>
+		</material>
+		<material id="BlueDiffuse" type="singlebsdf">
+			<bsdf type="diffuse"/>
+			<reflectance color="0.0, 0.0, 0.0"/>
+			<emittance>
+                <texture type="image" src="images/Body2.png" map="uv" flip="1"/>
+			</emittance>
+		</material>
+		<material id="GreenDiffuse" type="singlebsdf">
+			<bsdf type="diffuse"/>
+			<reflectance color="0.0, 0.0, 0.0"/>
+			<emittance>
+                <texture type="image" src="images/Body3.png" map="uv" flip="1"/>
+			</emittance>
+		</material>
+		<material id="YellowDiffuse" type="singlebsdf">
+			<bsdf type="diffuse"/>
+			<reflectance color="0.0, 0.0, 0.0"/>
+			<emittance>
+                <texture type="image" src="images/Body4.png" map="uv" flip="1"/>
+			</emittance>
+		</material>
+		<material id="CyanDiffuse" type="singlebsdf">
+			<bsdf type="diffuse"/>
+			<reflectance color="0.0, 0.0, 0.0"/>
+			<emittance>
+                <texture type="image" src="images/Body5.png" map="uv" flip="1"/>
+			</emittance>
+		</material>
+        -->
+		<material id="RedDiffuse" type="singlebsdf">
+			<bsdf type="diffuse"/>
+			<reflectance>
+				<texture type="image" src="images/Body1.png" map="uv" flip="1"/>
+            </reflectance>
+			<emittance color="0.0, 0.0, 0.0"/>
+		</material>
+		<material id="BlueDiffuse" type="singlebsdf">
+			<bsdf type="diffuse"/>
+			<reflectance>
+                <texture type="image" src="images/Body2.png" map="uv" flip="1"/>
+            </reflectance>
+			<emittance color="0.0, 0.0, 0.0"/>
+		</material>
+		<material id="GreenDiffuse" type="singlebsdf">
+			<bsdf type="diffuse"/>
+			<reflectance>
+                <texture type="image" src="images/Body3.png" map="uv" flip="1"/>
+            </reflectance>
+			<emittance color="0.0, 0.0, 0.0"/>
+		</material>
+		<material id="YellowDiffuse" type="singlebsdf">
+			<bsdf type="diffuse"/>
+			<reflectance>
+                <texture type="image" src="images/Body4.png" map="uv" flip="1"/>
+            </reflectance>
+			<emittance color="0.0, 0.0, 0.0"/>
+		</material>
+		<material id="CyanDiffuse" type="singlebsdf">
+			<bsdf type="diffuse"/>
+			<reflectance>
+                <texture type="image" src="images/Body5.png" map="uv" flip="1"/>
+            </reflectance>
+			<emittance color="0.0, 0.0, 0.0"/>
+		</material>
+	</library>
+	
+	<!-- cube -->
+	<object id="TheCube">
+		<transform>
+			<translate value="0.0, 0.0, 0.0"/>
+		</transform>
+		<geometry ref="MeshCube"/>
+		<material ref="RedDiffuse"/>
+	</object>
+	<object>
+		<transform>
+			<translate value="0.4, 0.0, 0.0"/>
+			<!-- <rotate axis="0.0, 1.0, 0.0" angle="1.0"/> -->
+		</transform>
+		<geometry ref="MeshCube"/>
+		<material ref="BlueDiffuse"/>
+	</object>
+	<object>
+		<transform>
+			<translate value="-0.4, 0.0, 0.0"/>
+			<!-- <rotate axis="1.0, 0.0, 0.0" angle="-1.0"/> -->
+		</transform>
+		<geometry ref="MeshCube"/>
+		<material ref="GreenDiffuse"/>
+	</object>
+	<object>
+		<transform>
+			<translate value="0.2, 0.4, 0.0"/>
+			<!-- <rotate axis="0.0, 1.0, 0.0" angle="1.0"/> -->
+		</transform>
+		<geometry ref="MeshCube"/>
+		<material ref="YellowDiffuse"/>
+	</object>
+	<object>
+		<transform>
+			<translate value="-0.2, 0.4, 0.0"/>
+			<!-- <rotate axis="1.0, 0.0, 0.0" angle="-1.0"/> -->
+		</transform>
+		<geometry ref="MeshCube"/>
+		<material ref="CyanDiffuse"/>
+	</object>
+    
+	<!-- light source object -->
+    <!--
+	<object id="emissionSphere" emitter="true">
+		<geometry type="sphere" position="3.0, 3.0, 3.0" radius="0.5"/>
+		<material type="singlebsdf">
+			<bsdf type="diffuse"/>
+			<reflectance color="0.0, 0.0, 0.0"/>
+			<emittance color="10.0, 10.0, 10.0"/>
+		</material>
+	</object>
+    -->
+</scene>

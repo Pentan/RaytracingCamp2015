@@ -1,0 +1,733 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<scene version="0.1">
+    <!-- config -->
+    <renderer
+        type="pathtrace"
+        width="1280"
+        height="720"
+        subSamples="2"
+        samples="45"
+        minDepth="3"
+        maxDepth="16"
+        tileSize="32"
+        threads="0"
+        output="final.bmp"/>
+    
+    <camera>
+        <transform>
+            <lookat 
+                position ="0.0, 0.35, 0.75"
+                lookat   ="0.0, 0.05, 0.0"
+                up       ="0.0, 1.0, 0.0"/>
+        </transform>
+        <lens focalLength="28.0" fNumber="1.2" focusDistance="0.85"/>
+        <sensor width="36.0" aspect="1.667"/>
+    </camera>
+    
+    <sky type="sphere">
+        <!-- <color type="rgb" value="0.18, 0.18, 0.18"/> -->
+        <texture type="image" src="images/sky.png" power="2.0"/>
+    </sky>
+    
+    <library>
+        <!--  -->
+        <geometry id="CatMesh" type="mesh" src="models/cat.obj"/>
+        <!--  -->
+        <material id="body1" type="singlebsdf">
+            <bsdf type="diffuse"/>
+            <reflectance>
+                <texture type="image" src="images/Body1.png" map="uv" flip="1"/>
+            </reflectance>
+            <emittance color="0.0, 0.0, 0.0"/>
+        </material>
+        <material id="body2" type="singlebsdf">
+            <bsdf type="diffuse"/>
+            <reflectance>
+                <texture type="image" src="images/Body2.png" map="uv" flip="1"/>
+            </reflectance>
+            <emittance color="0.0, 0.0, 0.0"/>
+        </material>
+        <material id="body3" type="singlebsdf">
+            <bsdf type="diffuse"/>
+            <reflectance>
+                <texture type="image" src="images/Body3.png" map="uv" flip="1"/>
+            </reflectance>
+            <emittance color="0.0, 0.0, 0.0"/>
+        </material>
+        <material id="body4" type="singlebsdf">
+            <bsdf type="diffuse"/>
+            <reflectance>
+                <texture type="image" src="images/Body4.png" map="uv" flip="1"/>
+            </reflectance>
+            <emittance color="0.0, 0.0, 0.0"/>
+        </material>
+        <material id="body5" type="singlebsdf">
+            <bsdf type="diffuse"/>
+            <reflectance>
+                <texture type="image" src="images/Body5.png" map="uv" flip="1"/>
+            </reflectance>
+            <emittance color="0.0, 0.0, 0.0"/>
+        </material>
+        <material id="body6" type="singlebsdf">
+            <bsdf type="specular"/>
+            <reflectance color="0.2, 0.2, 0.2"/>
+            <emittance>
+                <texture type="image" src="images/BodyE3.png" map="uv" flip="1"/>
+            </emittance>
+        </material>
+        <material id="body7" type="singlebsdf">
+            <bsdf type="specular"/>
+            <reflectance color="0.2, 0.2, 0.2"/>
+            <emittance>
+                <texture type="image" src="images/BodyE4.png" map="uv" flip="1"/>
+            </emittance>
+        </material>
+        <material id="body8" type="singlebsdf">
+            <bsdf type="refraction"/>
+            <reflectance color="0.8, 0.8, 0.8"/>
+            <emittance>
+                <texture type="image" src="images/BodyE3.png" map="uv" flip="1"/>
+            </emittance>
+        </material>
+        <material id="body9" type="singlebsdf">
+            <bsdf type="refraction"/>
+            <reflectance color="0.8, 0.8, 0.8"/>
+            <emittance>
+                <texture type="image" src="images/BodyE4.png" map="uv" flip="1"/>
+            </emittance>
+        </material>
+    </library>
+    
+    <!-- floor -->
+    <object>
+        <transform>
+            <translate value="0.0, -0.076, 0.0"/>
+        </transform>
+        <geometry type="mesh" src="models/floor.obj"/>
+        <material type="singlebsdf">
+            <bsdf type="diffuse"/>
+            <reflectance color="0.1, 0.1, 0.1"/>
+            <emittance color="0.0, 0.0, 0.0"/>
+        </material>
+    </object>
+    
+    <!-- ============= -->
+    
+<object>
+    <transform>
+        <translate value="-1.208561589760538, 0.0, -1.2218077333229111"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-1.1228547453340505"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body9"/>
+</object>
+<object>
+    <transform>
+        <translate value="-0.9035986667766328, 0.0, -1.203398004914021"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-0.9072020841890798"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body6"/>
+</object>
+<object>
+    <transform>
+        <translate value="-0.6149979120156656, 0.0, -1.183923485607305"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="1.3995054185723454"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body5"/>
+</object>
+<object>
+    <transform>
+        <translate value="-0.3070119891142446, 0.0, -1.2286790203640459"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="0.5508419337308244"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body7"/>
+</object>
+<object>
+    <transform>
+        <translate value="0.026508027495952574, 0.0, -1.1839418351453477"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-1.2524483905586037"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body4"/>
+</object>
+<object>
+    <transform>
+        <translate value="0.2833103210159513, 0.0, -1.1764177915635883"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-0.9830931355411617"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body2"/>
+</object>
+<object>
+    <transform>
+        <translate value="0.5906700686910068, 0.0, -1.178874796563884"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-1.1252021075383976"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body8"/>
+</object>
+<object>
+    <transform>
+        <translate value="0.9027069581842468, 0.0, -1.192291052573822"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="0.5222268038751964"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body8"/>
+</object>
+<object>
+    <transform>
+        <translate value="1.1902998449752125, 0.0, -1.1934949084702826"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-1.3043781526548466"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body4"/>
+</object>
+<object>
+    <transform>
+        <translate value="-1.1850872631330083, 0.0, -0.8918176356385797"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-1.1001222865965226"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body1"/>
+</object>
+<object>
+    <transform>
+        <translate value="-0.8768282755615278, 0.0, -0.9022160344752778"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-0.8900701910046902"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body4"/>
+</object>
+<object>
+    <transform>
+        <translate value="-0.603657712559718, 0.0, -0.9212023456354131"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-0.23250809261652702"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body7"/>
+</object>
+<object>
+    <transform>
+        <translate value="-0.28581475523002076, 0.0, -0.9040596915041519"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-0.7129347108727973"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body5"/>
+</object>
+<object>
+    <transform>
+        <translate value="-0.024216819954211214, 0.0, -0.8730462506988826"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="0.1399758666950903"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body5"/>
+</object>
+<object>
+    <transform>
+        <translate value="0.2729600296826198, 0.0, -0.8744006286689404"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="0.4624204561664265"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body4"/>
+</object>
+<object>
+    <transform>
+        <translate value="0.5720404056591037, 0.0, -0.9139661404303885"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="0.8652051927569949"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body4"/>
+</object>
+<object>
+    <transform>
+        <translate value="0.883551091045833, 0.0, -0.9132092186482166"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="0.1487915718866969"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body4"/>
+</object>
+<object>
+    <transform>
+        <translate value="1.2202076371430988, 0.0, -0.9136316799434262"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-0.8875281729835828"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body1"/>
+</object>
+<object>
+    <transform>
+        <translate value="-1.1983198420709549, 0.0, -0.6180868730956818"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-0.20722816274603525"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body9"/>
+</object>
+<object>
+    <transform>
+        <translate value="-0.8906458489781292, 0.0, -0.5942047211783754"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-0.9649918265243376"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body2"/>
+</object>
+<object>
+    <transform>
+        <translate value="-0.5772336550493596, 0.0, -0.5814074666315372"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-1.2302458760034936"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body2"/>
+</object>
+<object>
+    <transform>
+        <translate value="-0.3123432637529306, 0.0, -0.6123092435277441"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-0.6725993177606068"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body2"/>
+</object>
+<object>
+    <transform>
+        <translate value="-0.010482166354644065, 0.0, -0.62248052001837"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="0.03301431961978093"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body6"/>
+</object>
+<object>
+    <transform>
+        <translate value="0.28803083198158014, 0.0, -0.6243974641070956"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="0.8035253525063994"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body1"/>
+</object>
+<object>
+    <transform>
+        <translate value="0.6098054230693953, 0.0, -0.6214548839625544"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-1.1201177940573883"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body1"/>
+</object>
+<object>
+    <transform>
+        <translate value="0.907851464208611, 0.0, -0.5706283882127778"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="1.0712334605062424"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body5"/>
+</object>
+<object>
+    <transform>
+        <translate value="1.1805498301046915, 0.0, -0.5805019237683016"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-0.6002293495462063"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body1"/>
+</object>
+<object>
+    <transform>
+        <translate value="-1.194502435109255, 0.0, -0.2911085357156211"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="0.15872445028568608"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body8"/>
+</object>
+<object>
+    <transform>
+        <translate value="-0.9290619197945622, 0.0, -0.3051587823707663"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="1.1413845563643912"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body3"/>
+</object>
+<object>
+    <transform>
+        <translate value="-0.5793464401408736, 0.0, -0.2872403846031614"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="0.18998077053741638"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body7"/>
+</object>
+<object>
+    <transform>
+        <translate value="-0.3074959926949878, 0.0, -0.27259169929990257"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-0.5818485172767183"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body7"/>
+</object>
+<object>
+    <transform>
+        <translate value="-0.0038497892590853965, 0.0, -0.2985777041878834"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="1.1772625057016037"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body8"/>
+</object>
+<object>
+    <transform>
+        <translate value="0.2795881089028018, 0.0, -0.2741753192073654"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-0.3018217031543837"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body4"/>
+</object>
+<object>
+    <transform>
+        <translate value="0.623097022980638, 0.0, -0.2929445498720657"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-0.632833805546398"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body6"/>
+</object>
+<object>
+    <transform>
+        <translate value="0.9180576590532178, 0.0, -0.3251647891809354"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-1.040281090987474"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body1"/>
+</object>
+<object>
+    <transform>
+        <translate value="1.2068201030798984, 0.0, -0.31270965590454197"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="1.3381147080356552"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body2"/>
+</object>
+<object>
+    <transform>
+        <translate value="-1.2081425033833286, 0.0, -0.02989060569957399"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-0.8811714666411385"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body1"/>
+</object>
+<object>
+    <transform>
+        <translate value="-0.9218941037953186, 0.0, 0.025008892959417522"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="1.227090221211418"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body7"/>
+</object>
+<object>
+    <transform>
+        <translate value="-0.5984035946183917, 0.0, 0.017337571910631903"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="0.6998346390427713"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body4"/>
+</object>
+<object>
+    <transform>
+        <translate value="-0.3209714981492728, 0.0, 0.021232855766959335"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="0.26124148688754073"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body5"/>
+</object>
+<object>
+    <transform>
+        <translate value="0.00012008435376154259, 0.0, -0.01838030923895624"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="0"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body1"/>
+</object>
+<object>
+    <transform>
+        <translate value="0.3087633713746026, 0.0, 0.02740622983653762"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="0.47767993461257635"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body9"/>
+</object>
+<object>
+    <transform>
+        <translate value="0.5723016722762128, 0.0, -0.02004304068705954"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-0.7929402983613308"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body2"/>
+</object>
+<object>
+    <transform>
+        <translate value="0.902967621991778, 0.0, -0.019378255299153112"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-0.6194208165771127"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body3"/>
+</object>
+<object>
+    <transform>
+        <translate value="1.1713675066938192, 0.0, -0.003914266982997059"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-0.9351253892411603"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body5"/>
+</object>
+<object>
+    <transform>
+        <translate value="-1.213240274834108, 0.0, 0.30370394340910045"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="1.4846267336588632"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body2"/>
+</object>
+<object>
+    <transform>
+        <translate value="-0.8934877828699094, 0.0, 0.30516607926631095"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="1.2905182283313206"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body5"/>
+</object>
+<object>
+    <transform>
+        <translate value="-0.6289514061010947, 0.0, 0.30770783511634786"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="1.469536753473748"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body7"/>
+</object>
+<object>
+    <transform>
+        <translate value="-0.32336465604261316, 0.0, 0.3092854524051333"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="1.1058249594134735"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body3"/>
+</object>
+<object>
+    <transform>
+        <translate value="0.3071127636440716, 0.0, 0.27368269987693045"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="1.1594327769292272"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body1"/>
+</object>
+<object>
+    <transform>
+        <translate value="0.57060099684196, 0.0, 0.29148075970869075"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="0.22315713462624792"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body4"/>
+</object>
+<object>
+    <transform>
+        <translate value="0.8766691607948498, 0.0, 0.2821105909592078"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="1.2450585680156203"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body8"/>
+</object>
+<object>
+    <transform>
+        <translate value="1.188695620115432, 0.0, 0.2893085418986187"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="0.8471334319757498"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body9"/>
+</object>
+<object>
+    <transform>
+        <translate value="-1.2058373817293475, 0.0, 0.5786878448770375"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-1.3111975346406903"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body3"/>
+</object>
+<object>
+    <transform>
+        <translate value="-0.8943740986591592, 0.0, 0.5971757172586806"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-1.5636513605369406"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body5"/>
+</object>
+<object>
+    <transform>
+        <translate value="-0.5801931693725667, 0.0, 0.6142587575682131"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-1.133818533055828"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body7"/>
+</object>
+<object>
+    <transform>
+        <translate value="-0.31688290562952764, 0.0, 0.5781122498771476"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="1.4346619968728311"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body8"/>
+</object>
+<object>
+    <transform>
+        <translate value="0.28751799848095294, 0.0, 0.6265525945248663"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="1.3282226210160704"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body1"/>
+</object>
+<object>
+    <transform>
+        <translate value="0.5887022947226682, 0.0, 0.6254749521590747"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-0.014611561549564365"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body7"/>
+</object>
+<object>
+    <transform>
+        <translate value="0.909054450279319, 0.0, 0.6035086284047969"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="1.0119296490490466"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body8"/>
+</object>
+<object>
+    <transform>
+        <translate value="1.2187664772710893, 0.0, 0.6058873574202986"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="0.2401062768262523"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body4"/>
+</object>
+<object>
+    <transform>
+        <translate value="-1.2055032765399398, 0.0, 0.918904645696081"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-0.32620693557098296"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body8"/>
+</object>
+<object>
+    <transform>
+        <translate value="-0.9000609919968916, 0.0, 0.9151729617765416"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-0.8528407566116787"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body7"/>
+</object>
+<object>
+    <transform>
+        <translate value="-0.615234456691425, 0.0, 0.9002804902712577"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-1.3596039352367353"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body7"/>
+</object>
+<object>
+    <transform>
+        <translate value="-0.270879951450483, 0.0, 0.8880414952385967"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-1.045026641334686"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body6"/>
+</object>
+<object>
+    <transform>
+        <translate value="0.3210001039338039, 0.0, 0.9198086451590826"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-1.055999607262015"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body3"/>
+</object>
+<object>
+    <transform>
+        <translate value="0.6142953803901438, 0.0, 0.8997108584420072"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="0.9394321499039162"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body9"/>
+</object>
+<object>
+    <transform>
+        <translate value="0.8713596267564511, 0.0, 0.9037777894379179"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-1.5508614533053218"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body9"/>
+</object>
+<object>
+    <transform>
+        <translate value="1.1783411576434133, 0.0, 0.9020211709997128"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-1.3836604327990232"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body5"/>
+</object>
+<object>
+    <transform>
+        <translate value="-1.1975994632157128, 0.0, 1.2045361948427458"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="0.517771967609627"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body1"/>
+</object>
+<object>
+    <transform>
+        <translate value="-0.882732771680331, 0.0, 1.2243266232460746"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="1.0238319543935361"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body3"/>
+</object>
+<object>
+    <transform>
+        <translate value="-0.5989699335410704, 0.0, 1.2239502328407699"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="0.9522505580828695"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body6"/>
+</object>
+<object>
+    <transform>
+        <translate value="-0.2980764891915475, 0.0, 1.225805998737162"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-0.430125177790628"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body3"/>
+</object>
+<object>
+    <transform>
+        <translate value="0.2873978035528639, 0.0, 1.1787632828883607"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="1.5153944019520131"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body9"/>
+</object>
+<object>
+    <transform>
+        <translate value="0.6033607790149028, 0.0, 1.1855866212616892"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-1.2904679355088395"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body7"/>
+</object>
+<object>
+    <transform>
+        <translate value="0.9153574907805178, 0.0, 1.214190762266701"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="1.5139972422896972"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body6"/>
+</object>
+<object>
+    <transform>
+        <translate value="1.1824010069494333, 0.0, 1.2211387881848013"/>
+        <rotate axis="0.0, 1.0, 0.0" angle="-1.2109128346826699"/>
+    </transform>
+    <geometry ref="CatMesh"/>
+    <material ref="body1"/>
+</object>
+
+</scene>

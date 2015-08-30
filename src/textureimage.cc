@@ -22,11 +22,12 @@ ImageTexture::~ImageTexture() {
 	}
 }
 
-bool ImageTexture::load(const std::string& path, int ipo, R1hFPType gamma, R1hFPType power) {
+bool ImageTexture::load(const std::string& path, int ipo, int flip, R1hFPType gamma, R1hFPType power) {
 	int w, h, comp;
 
 	interpolate = ipo;
 
+	stbi_set_flip_vertically_on_load(flip);
 	stbi_ldr_to_hdr_gamma(float(gamma));
 	//stbi_ldr_to_hdr_scale(float(power)); // want to apply both HDR and LDR case.
 
