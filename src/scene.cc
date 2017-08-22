@@ -205,7 +205,7 @@ Color Scene::radiance(Renderer::Context *cntx, const Ray &ray) {
             for(int j = 0; j < (int)tmprays->size(); j++) {
                 Ray &nwray = tmprays->at(j);
                 nwray.smallOffset(intersect.normal);
-                nwray.weight = Color::mul(nwray.weight, traceray.weight * russianprob);
+                nwray.weight = Color::mul(nwray.weight, traceray.weight / russianprob);
                 nextrays->push_back(nwray);
             }
 		}
